@@ -1,0 +1,75 @@
+/* Đặt lại style mặc định */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Định dạng cho toàn bộ trang */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+/* Định dạng thanh menu dọc */
+.vertical-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 200px; /* Chiều rộng của menu */
+    background-color: #f1f1f1; /* Màu nền của menu */
+    position: absolute;
+    left: 0;
+    top: 80px; /* Điều chỉnh khoảng cách với tiêu đề */
+    height: 100%; /* Chiều cao full */
+    border-right: 1px solid #ccc; /* Đường viền phân cách */
+}
+
+.vertical-menu li {
+    display: block;
+}
+
+.vertical-menu li a {
+    display: block;
+    color: black;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 16px;
+    border-bottom: 1px solid #ccc; /* Đường kẻ dưới các mục */
+}
+
+.vertical-menu li a:hover {
+    background-color: #ddd;
+    color: black;
+}
+
+.vertical-menu li a.active {
+    background-color: #4CAF50; /* Màu nền cho mục được chọn */
+    color: white;
+}
+
+/* Định dạng cho phần nội dung chính */
+main {
+    margin-left: 220px; /* Đẩy phần nội dung chính sang phải để tránh trùng với menu */
+    padding: 20px;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #333;
+    color: white;
+}
