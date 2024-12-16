@@ -1,0 +1,48 @@
+
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+      file-size-threshold: 2MB
+  messages:
+    basename: i18n/message
+    encoding: UTF-8
+    default-locale: en
+  cassandra:
+    connection:
+      connect-timeout: 5000
+
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/shopapp
+#    ?useSSL=false&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    hibernate:
+#      dialect=org:
+#        hibernate:
+#          dialect:
+#            MySQLDialect:
+    username: root
+    password:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+      dialect: org.hibernate.dialect.MySQL8Dialect
+      format_sql: true
+
+api:
+  prefix: /api/v1
+
+jwt:
+  expiration: 2592000 #30day = 30* 24 * 60 * 60
+  #    //thời gian token còn hiệụ lực
+  secretKey: X0UR5jbk9kS8d2Jm0X5HZ3szo0Yr92ZlRT+F3Slu9cQ=
+#  // code naỳ là gen radom ra  (vì đoạn secretKey k mã hóa đc bên gen thử xem đc k đc thì lấy luôn )
+
+

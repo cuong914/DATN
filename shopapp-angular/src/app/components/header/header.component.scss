@@ -1,0 +1,63 @@
+
+/* Gradient cho navbar */
+.bg-gradient-dark {
+    background: linear-gradient(135deg, #9b9a9a, #1d2124);
+  }
+  
+  /* Tùy chỉnh liên kết trong navbar */
+  .navbar-nav .nav-link {
+    color: #fff;
+    transition: color 0.3s ease, transform 0.3s ease;
+    padding: 0.5rem 1rem;
+  }
+  
+  .navbar-nav .nav-link:hover,
+  .navbar-nav .nav-link.active {
+    color: #f06565;
+    transform: scale(1.05);
+  }
+  
+  /* Hiệu ứng cho biểu tượng giỏ hàng */
+  .navbar-nav .nav-link .icon {
+    margin-right: 5px;
+    transition: transform 0.3s ease;
+  }
+  
+  .navbar-nav .nav-link:hover .icon {
+    transform: rotate(-15deg);
+  }
+  
+  /* Badge cho giỏ hàng */
+  .navbar-nav .badge {
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+  }
+  
+  /* Popover tùy chỉnh */
+  .popover-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .popover-item {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: #495057;
+    text-decoration: none;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  
+  .popover-item:hover {
+    background-color: #f8f9fa;
+    color: #007bff;
+  }
+  
+  /* Toggler button màu sáng hơn */
+  .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+  
+  .navbar-toggler-icon {
+    filter: invert(1);
+  }
+  

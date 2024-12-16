@@ -1,0 +1,138 @@
+<!-- Hiển thị danh sách sản phẩm -->
+<h3>Danh sách sản phẩm</h3>
+<!-- <div class="col-lg-4 col-md-6" *ngFor="let product of products">
+    <div class="product-item" (click)="onProductClick(product.id)">
+      <img [src]="product.url" alt="Product Image" class="product-image">
+      <h3 class="product-name">{{ product.name }}</h3>
+      <p class="product-description">{{ product.description }}</p>
+      <p class="product-price">Giá: ${{ product.price }}</p>
+    </div>
+  </div> -->
+<div class="product-list-container">
+  <table class="bordered-table">
+    <tr>
+      <th>Tên sản phẩm</th>
+      <th>Ảnh</th>
+      <th>Giá</th>
+      <th>Miêu tả</th>
+      <th>Thêm số sản phẩm </th>
+    </tr>
+    <tr *ngFor="let product of products">
+      <td>
+        <h3 class="product-name">{{ product.name }}</h3>
+      </td>
+
+      <td><img [src]="product.url" class="price-column" /></td>
+      <td>
+        <p class="product-price">Giá: ${{ product.price }}</p>
+      </td>
+      <td>{{ product.description }}</td> 
+      <td>
+         <!-- <div class="product-quantity">
+        <div class="border-wrapper">
+          <button (click)="decreaseQuantity(product)">-</button>
+          <input type="text" [value]="quantity">
+          <button (click)="increaseQuantity(product)">+</button>
+        </div>
+      </div> -->
+      
+    </td>
+      <td>
+        <button
+          (click)="addToCartBH(product.id, product.name, product.price, 1)"
+        >
+          thêm sp
+        </button>
+      </td>
+      <!-- <td><button (click)="themSanPhamVaoHoaDon(sanPham)">Thêm vào hóa đơn</button></td> -->
+    </tr>
+  </table>
+</div>
+<div class="container">
+  
+  <div class="block">
+<h1>Giở hàng</h1>
+<div class="cart-container">
+  <!-- Nút tạo giỏ hàng -->
+  <button (click)="createCart()">Tạo giỏ hàng</button>
+
+  <!-- Nhập mã giỏ hàng sau khi tạo -->
+  <div *ngIf="isCreatingCart" class="cart-input">
+    <input [(ngModel)]="cartID" placeholder="Nhập mã giỏ hàng" />
+    <button (click)="confirmCartID()">Xác nhận</button>
+  </div>
+
+  <!-- Danh sách giỏ hàng đã tạo -->
+  <div *ngIf="carts.length > 0">
+    <h3>Danh sách giỏ hàng</h3>
+    <ul>
+      <li (click)="selectCart(cart.id)" *ngFor="let cart of carts">
+        Mã giỏ hàng: {{ cart.id }}
+        <button (click)="removeCart(cart.id)" class="remove-cart">X</button>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Hiển thị thông tin giỏ hàng đã chọn -->
+<div *ngIf="selectedCart">
+  <h4>Thông tin giỏ hàng: {{ selectedCart.id }}</h4>
+
+  <table class="bordered-table">
+    <thead>
+      <tr>
+        <th>Tên sản phẩm</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of selectedCart.items">
+        <td>{{ item.name }}</td>
+        <td>{{ item.price | currency }}</td>
+        <td>
+          {{ item.quantity }}
+         
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="selectedCart.items.length === 0">
+    <p>Giỏ hàng trống.</p>
+  </div>
+</div>
+</div>
+
+<div class="paypay">
+  <h1>Thanh Toán</h1>
+  <form (ngSubmit)="calculateInvoice()">
+    <div *ngIf="selectedCart">
+      <label for="cartId">Mã giỏ hàng: {{ selectedCart.id }}</label>
+    </div>
+    <div>
+      <p>Tổng tiền: {{ getTotalPrice() |  currency: 'USD': 'symbol':'1.2-2'  }}</p>
+    </div>
+    <label for="amountGiven">Số tiền khách đưa:</label>
+    <input type="number" [(ngModel)]="amountGiven" name="amountGiven" placeholder="Nhập số tiền" />
+    <button type="submit">Xác nhận thanh toán</button>
+  </form>
+  <!-- <form (ngSubmit)="calculateInvoice()">
+    <div *ngIf="selectedCart">
+      <label for="cartId">Mã giỏ hàng: {{ selectedCart.id }}</label>
+    </div>
+
+    <div>
+      <p>Tổng tiền: {{ getTotalPrice() | currency }}</p>
+    </div>
+
+    <label for="amountGiven">Số tiền khách đưa:</label>
+<input type="number" [(ngModel)]="amountGiven" placeholder="Nhập số tiền" />
+
+    <div>
+      <p *ngIf="message">{{ message }}</p> 
+
+    <button type="submit">Xác nhận thanh toán</button>
+  </form> -->
+</div>
+</div>

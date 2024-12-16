@@ -1,0 +1,66 @@
+<div class="wrapper">
+  <!-- Sidebar -->
+  <nav id="sidebar" class="sidebar" [class.collapsed]="isSidebarCollapsed">
+    <div class="logo">
+      <a href="#" class="simple-text">
+        <h1>TEES</h1>
+      </a>
+    </div>
+    <ul class="nav">
+      <li>
+        <a class="nav-link" (click)="showAdminComponent('banhang')">
+          <i class="fas fa-home icon"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" (click)="showAdminComponent('orders')">
+          <i class="fas fa-file-invoice icon"></i>
+          <span>Hóa Đơn</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" (click)="showAdminComponent('categories')">
+          <i class="fas fa-tags icon"></i>
+          <span>Loại Sản Phẩm</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" (click)="showAdminComponent('products')">
+          <i class="fas fa-boxes icon"></i>
+          <span>Sản Phẩm</span>
+        </a>
+      </li>
+      <li>
+        <a class="nav-link" (click)="showAdminComponent('statistical')">
+          <i class="fas fa-chart-bar icon"></i>
+          <span>Thống Kê</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Panel -->
+  <div class="main-panel">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <button class="menu-toggle" (click)="toggleSidebar()">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+      <div class="header-right">
+        <button class="btn-notify"><i class="fas fa-bell"></i></button>
+        <button class="btn-settings"><i class="fas fa-cog"></i></button>
+        <button class="btn-logout btn-danger" (click)="logout()">
+          <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
