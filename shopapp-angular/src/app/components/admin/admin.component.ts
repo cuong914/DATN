@@ -42,6 +42,8 @@ export class AdminComponent implements OnInit {
       this.router.navigate(['/admin/sizes']);
     } else if (componentName === 'products') {
       this.router.navigate(['/admin/products']);
+    }else if (componentName === 'colors') {
+      this.router.navigate(['/admin/colors']);
     } else if (componentName === 'statistical') {
       this.router.navigate(['/admin/statistical']);
     } else if (componentName === 'banhang') {

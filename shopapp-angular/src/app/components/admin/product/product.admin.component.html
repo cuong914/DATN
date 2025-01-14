@@ -22,12 +22,12 @@
       <thead class="table-light">
         <tr>
           <th>Tên</th>
-          <!-- <th>Kích Thước</th> -->
+          <th>Kích Thước</th>
           <th>Màu sắc</th>
           <th>Số lượng</th>
           <th>Giá</th>
           <th>Ảnh</th>
-          <th>Size</th>
+          <th>Mô tả</th>
           <th>Hành Động</th>
         </tr>
       </thead>
@@ -35,15 +35,15 @@
         @for(product of products; track product.id) {
           <tr (click)="updateProduct(product.id)" class="clickable-row">
             <td>{{ product.name }}</td>
-            <!-- <td>{{ product.size }}</td> -->
-            <td>{{ product.color }}</td>
+            <td>{{ product.size_id }}</td>
+            <td>{{ product.color_id }}</td>
             <td>{{ product.numberProduct }}</td>
             <td>{{ product.price | number: '1.0-0' }} VND</td>
             <td>
               <img src="{{ product.url }}" class="rounded" alt="Thumbnail" width="80" height="80">
             </td>
             <td class="text-wrap" style="max-width: 250px;">
-              {{ product.size_id }}
+              {{ product.description }}
             </td>
             <td>
               <button class="btn btn-danger btn-sm" (click)="deleteProduct(product); $event.stopPropagation()">

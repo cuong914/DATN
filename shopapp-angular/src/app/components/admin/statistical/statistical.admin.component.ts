@@ -3,8 +3,7 @@ import { ChartData, ChartOptions } from "chart.js";
 import { StatisticsService } from '../../../service/statistics.service';
 import { NgChartsModule } from "ng2-charts";
 import { CommonModule } from '@angular/common';
-// import { NgChartsModule, ChartsModule } from 'ng2-charts';
-
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-statistical-admin',
@@ -13,10 +12,12 @@ import { CommonModule } from '@angular/common';
       './statistical.admin.component.scss',        
     ],
     standalone: true,
-    imports: [NgChartsModule,CommonModule],
+    imports: [NgChartsModule,CommonModule,FormsModule],
   })
 
 export class StatisticalAdminComponent implements OnInit {
+    startDate: string = '';
+    endDate: string = '';
     public deliveredOrders: number = 0;
     public pendingOrders: number = 0;
     public cancelledOrders: number = 0;
@@ -35,42 +36,81 @@ export class StatisticalAdminComponent implements OnInit {
         }
     };
 
-    constructor(private statisticsService: StatisticsService) {
+    constructor(private statisticsService: StatisticsService) { 
         this.topProductsData = { labels: [], datasets: [] };
-    }
-
-    ngOnInit() {
-        this.loadOrderStatistics();
-        this.loadTopSellingProducts();
-    }
-
-    // Load thống kê đơn hàng
-    loadOrderStatistics() {
-        this.statisticsService.getOrderStatistics().subscribe(data => {
+      }
+    
+      ngOnInit(): void {
+          this.loadTopSellingProducts();
+          this.loadOrderStatistics();
+      }
+      loadOrderStatisticssearch(): void {
+        if (this.startDate && this.endDate) {
+          const formattedStartDate = this.startDate + "T00:00:00";
+          const formattedEndDate = this.endDate + "T23:59:59";
+      
+          this.statisticsService.getOrderStatistic(formattedStartDate, formattedEndDate).subscribe(
+            data => {
+              this.deliveredOrders = data.deliveredOrders;
+              this.pendingOrders = data.pendingOrders;
+              this.cancelledOrders = data.cancelledOrders;
+              this.totalRevenue = data.totalRevenue;
+              
+              // Cập nhật dữ liệu sản phẩm bán chạy khi lọc
+              if (data.topProductsData) {
+                this.topProductsData = {
+                  labels: data.topProductsData.map((item: { productName: string }) => item.productName),
+                  datasets: [{
+                    label: 'Số lượng đã bán',
+                    data: data.topProductsData.map((item: { totalSold: number }) => item.totalSold),
+                    backgroundColor: '#4CAF50'
+                  }]
+                };
+                this.productDetails = data.topProductsData;
+              } else {
+                console.warn('Không có dữ liệu sản phẩm bán chạy trong phạm vi lọc.');
+                this.topProductsData = { labels: [], datasets: [] };
+                this.productDetails = [];
+              }
+            },
+            error => {
+              console.error('Error fetching order statistics:', error);
+            }
+          );
+        }
+      }
+      
+    loadOrderStatistics(): void {
+        this.statisticsService.getOrderStatisticsss().subscribe(
+          data => {
             this.deliveredOrders = data.deliveredOrders;
             this.pendingOrders = data.pendingOrders;
             this.cancelledOrders = data.cancelledOrders;
             this.totalRevenue = data.totalRevenue;
-        });
-    }
-
-    // Load sản phẩm bán chạy
-    loadTopSellingProducts() {
-      this.statisticsService.getTopSellingProducts().subscribe(data => {
-          // Chỉ lấy top 6 sản phẩm đầu tiên
-          const top6Products = data.slice(0, 6);
-  
-          this.topProductsData = {
+          },
+          error => {
+            console.error('Error fetching order statistics:', error);
+          }
+        );
+      }
+      
+    loadTopSellingProducts(): void {
+        this.statisticsService.getTopSellingProducts().subscribe(
+          data => {
+            const top6Products = data.slice(0, 6);
+            this.topProductsData = {
               labels: top6Products.map((item: { productName: string }) => item.productName),
               datasets: [{
-                  label: 'Số lượng đã bán',
-                  data: top6Products.map((item: { totalSold: number }) => item.totalSold),
-                  backgroundColor: '#4CAF50'
+                label: 'Số lượng đã bán',
+                data: top6Products.map((item: { totalSold: number }) => item.totalSold),
+                backgroundColor: '#4CAF50'
               }]
-          };
-  
-          this.productDetails = top6Products;
-      });
-  }
-  
+            };
+            this.productDetails = top6Products;
+          },
+          error => {
+            console.error('Lỗi khi lấy sản phẩm bán chạy:', error);
+          }
+        );
+      }
 }

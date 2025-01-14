@@ -1,61 +1,69 @@
 <app-header></app-header>
-<div class="container">
-    <div class="intro-section">
-        <h1>Đây là trang chi tiết sản phẩm</h1>
-    </div>    
-    <div class="row">
-      <div class="col-md-6">
-        <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner">
-            <div *ngFor="let image of product?.product_images; let i = index" 
-                 class="carousel-item" [ngClass]="{'active': i === currentImageIndex}">
-              <div class="square-image">
-                <img [src]="image.image_url" class="product-image" alt="Product Image">
-              </div>
+<div class="container mt-5">
+  <div class="intro-section text-center mb-4">
+    <h1 class="fw-bold">Chi Tiết Sản Phẩm</h1>
+  </div>
+
+  <div class="row g-4">
+    <!-- Carousel Section -->
+    <div class="col-md-6">
+      <div id="carouselExample" class="carousel slide shadow-sm rounded overflow-hidden" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div *ngFor="let image of product?.product_images; let i = index" 
+               class="carousel-item" [ngClass]="{'active': i === currentImageIndex}">
+            <div class="square-image">
+              <img [src]="image.image_url" class="product-image img-fluid" alt="Product Image">
             </div>
           </div>
-          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" 
-                  data-bs-slide="prev" (click)="previousImage()">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-          </button>
-          <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" 
-                  data-bs-slide="next" (click)="nextImage()">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-          </button>
         </div>
-        <div class="row">
-          <div class="thumbnail-container">
-            <div *ngFor="let image of product?.product_images; let i = index" 
-                 class="thumbnail-item" 
-                 [ngClass]="{'active': i === currentImageIndex}"
-                 (click)="thumbnailClick(i)">
-              <img [src]="image.image_url" class="thumbnail-image" alt="Thumbnail Image">
-            </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" 
+                data-bs-slide="prev" (click)="previousImage()">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" 
+                data-bs-slide="next" (click)="nextImage()">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+
+      <div class="row mt-3">
+        <div class="thumbnail-container d-flex justify-content-center gap-2">
+          <div *ngFor="let image of product?.product_images; let i = index" 
+               class="thumbnail-item border rounded" 
+               [ngClass]="{'active': i === currentImageIndex}"
+               (click)="thumbnailClick(i)" style="cursor: pointer;">
+            <img [src]="image.image_url" class="thumbnail-image img-fluid" alt="Thumbnail Image">
           </div>
         </div>
       </div>
-      <div class="col-md-6">
-        <div class="product-details">
-          <h2>{{ product?.name }}</h2>
-          <p>{{ product?.description }}</p>
-          <p>Giá: ${{ product?.price }}</p>
-          <p>Số Lượng :{{ product?.numberProduct }}</p>
-          <p>Size :{{ product?.size_id }}</p>
-          <div class="product-actions">
-            <button class="btn btn-primary" (click)="addToCart()">Thêm vào giỏ hàng</button>
-            <button class="btn btn-success" (click)="buyNow()">Mua ngay</button>
-          </div>
-          <div class="product-quantity">
-            <div class="border-wrapper">
-              <button (click)="decreaseQuantity()">-</button>
-              <input type="text" [value]="quantity">
-              <button (click)="increaseQuantity()">+</button>
-            </div>
+    </div>
+
+    <!-- Product Details Section -->
+    <div class="col-md-6">
+      <div class="product-details p-4 shadow-sm rounded bg-light">
+        <h2 class="fw-bold mb-3">{{ product?.name }}</h2>
+        <p class="text-muted mb-4">Mô Tả : {{ product?.description }}</p>
+        <p>Giá: <span class="text-danger fw-bold">{{ product?.price | currency:'VND':'symbol':'1.0-0' }}</span></p>
+        <p>Số Lượng: <span class="fw-bold">{{ product?.numberProduct }}</span></p>
+        <p>Size: <span class="fw-bold">{{ product?.namesize }}</span></p>
+        <p>Màu: <span class="fw-bold">{{ product?.namecolor }}</span></p>
+
+        <div class="product-actions mt-4 d-flex gap-3">
+          <button class="btn btn-primary btn-lg" (click)="addToCart()">Thêm vào giỏ hàng</button>
+          <button class="btn btn-success btn-lg" (click)="buyNow()">Mua ngay</button>
+        </div>
+
+        <div class="product-quantity mt-4 d-flex align-items-center gap-3">
+          <div class="border-wrapper d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary" (click)="decreaseQuantity()">-</button>
+            <input type="text" class="form-control text-center" style="width: 60px;" [value]="quantity" readonly>
+            <button class="btn btn-outline-secondary" (click)="increaseQuantity()">+</button>
           </div>
         </div>
-      </div>      
-    </div>    
+      </div>
+    </div>
+  </div>
 </div>
 <app-footer></app-footer>

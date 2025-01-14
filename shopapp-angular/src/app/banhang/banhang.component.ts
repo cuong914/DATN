@@ -6,6 +6,8 @@ import { environment } from '../environments/environments';
 import { CartService } from '../service/cart.service';
 import { ProductService } from '../service/product.service';
 import { Product } from '../models/product';
+import { SizeService } from '../service/size.service';
+import { Size } from '../models/size';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -28,6 +30,7 @@ export class BanhangComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
+    private sizeService: SizeService,
     private http: HttpClient
   ) {}
 
@@ -41,19 +44,17 @@ export class BanhangComponent implements OnInit {
     }
   }
 
-  // Tải danh sách sản phẩm từ backend
   loadProducts(): void {
     this.productService.getAll().subscribe((response: any) => {
       this.products = response.map((product: any) => ({
         ...product,
         url: `${environment.apiBaseurl}/products/images/${product.thumbnail || 'default.png'}`,
+        sizeName: product.size?.name, // Gán sizeName từ product.size.name
       }));
       this.saveProductsToLocalStorage();
     });
   }
   
-  
-
   // Lưu hóa đơn vào localStorage
   saveOrdersToLocalStorage(): void {
     try {

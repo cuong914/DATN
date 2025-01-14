@@ -47,17 +47,34 @@ export class CartService {
       return 'cart:guest';
     }
   }
+// Lấy số lượng sản phẩm trong giỏ hàng
+getCartQuantity(productId: number): number {
+  return this.cart.get(productId) || 0;
+}
 
   // Thêm sản phẩm vào giỏ hàng
-  addToCart(productId: number, quantity: number = 1): void {
+  addToCart(productId: number, quantity: number, stockQuantity: number): void {
+    const currentQuantityInCart = this.cart.get(productId) || 0; // Lấy số lượng sản phẩm trong giỏ hàng
+  
+    // Kiểm tra nếu tổng số lượng vượt quá số lượng trong kho
+    if (currentQuantityInCart + quantity > stockQuantity) {
+      console.warn(`Không thể thêm sản phẩm ID ${productId}. Số lượng trong giỏ hàng vượt quá số lượng trong kho.`);
+      alert('Số lượng sản phẩm trong giỏ hàng vượt quá số lượng trong kho!');
+      return; // Dừng nếu vượt quá kho
+    }
+  
+    // Nếu không vượt quá, thêm sản phẩm vào giỏ hàng
     if (this.cart.has(productId)) {
-      this.cart.set(productId, this.cart.get(productId)! + quantity);
+      this.cart.set(productId, currentQuantityInCart + quantity);
     } else {
       this.cart.set(productId, quantity);
     }
+  
+    // Lưu giỏ hàng vào localStorage và cập nhật số lượng
     this.saveCartToLocalStorage();
-    this.updateCartItemCount(); // Cập nhật số lượng sau khi thay đổi giỏ hàng
+    this.updateCartItemCount();
   }
+  
   // Tính tổng tiền dựa trên giỏ hàng và giá sản phẩm
   calculateTotalMoney(productPrices: { [productId: number]: number }): number {
     let total = 0;

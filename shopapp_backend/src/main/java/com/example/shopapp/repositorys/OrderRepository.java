@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order,Long> {
@@ -28,17 +29,27 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
 
     @Query("SELECT SUM(o.totalMoney) FROM Order o WHERE o.status = 'delivered'")
-    Long calculateTotalRevenue();
+    Long calculateTotalRevenue1();
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'delivered'")
-    Long countDeliveredOrders();
+    Long countDeliveredOrders1();
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'pending'")
-    Long countPendingOrders();
+    Long countPendingOrders1();
 
     @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'cancelled'")
-    Long countCancelledOrders();
+    Long countCancelledOrders1();
 
-    List<Order> findByStatus(String status); // Thêm phương thức này
+    @Query("SELECT SUM(o.totalMoney) FROM Order o WHERE o.status = 'delivered' AND o.orderDate BETWEEN :startDate AND :endDate")
+    Long calculateTotalRevenue(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'delivered' AND o.orderDate BETWEEN :startDate AND :endDate")
+    Long countDeliveredOrders(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'pending' AND o.orderDate BETWEEN :startDate AND :endDate")
+    Long countPendingOrders(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'cancelled' AND o.orderDate BETWEEN :startDate AND :endDate")
+    Long countCancelledOrders(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
 }

@@ -1,0 +1,42 @@
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Màu Sắc </h1>
+  
+    <div class="row mb-3">
+      <div class="col-md-8">
+        <button class="btn btn-success shadow" (click)="insertColor()">
+          <i class="fas fa-plus"></i> Thêm Màu Sắc 
+        </button>
+      </div>
+    </div>
+  
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered text-center">
+        <thead class="table-light">
+          <tr>
+            <th>STT</th>
+            <th>Tên Màu Sắc</th>
+            <th>Hành Động</th>
+          </tr>  
+        </thead>
+        <tbody>
+          <tr *ngFor="let color of colors; let index = index; trackBy: trackByColorId"
+              (click)="updateColor(color.id)" style="cursor: pointer;">
+              <td>{{ index + 1 }}</td>
+              <td>{{ color.name }}</td>
+              <td>
+                  <button class="btn btn-danger btn-sm"
+                          (click)="deleteColor(color); $event.stopPropagation()">
+                      <i class="fas fa-trash"></i> Xóa
+                  </button>
+              </td>
+          </tr>
+          <tr *ngIf="colors.length === 0">
+              <td colspan="3">
+                  <h5 class="text-center text-muted mt-3">Không tìm thấy Màu Sắc</h5>
+              </td>
+          </tr>
+      </tbody>
+      </table>
+    </div>
+  </div>
+  

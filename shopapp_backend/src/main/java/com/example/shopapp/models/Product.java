@@ -45,8 +45,10 @@ public class Product extends BaseEntity {
     @Column(name = "thumbnail", length = 300)
 
     private String thumbnail;
-    @Column(name = "color")
-    private String color;
+
+    @ManyToOne
+    @JoinColumn(name = "color_id")
+    private Color color;
 
     @Column(name = "description")
     private String description;
@@ -64,9 +66,7 @@ public class Product extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "size_id")
     private Size size;
-//    @ManyToOne
-//    @JoinColumn(name = "size_id")
-//    private Size size;
+
 
     @OneToMany(mappedBy = "product",
             cascade = CascadeType.ALL,

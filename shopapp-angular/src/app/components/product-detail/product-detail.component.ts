@@ -9,12 +9,13 @@ import { ProductImage } from '../../models/product.image';
 import { environment } from '../../environments/environments';
 import { CategoryService } from '../../service/category.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [HeaderComponent, FooterComponent, NgClass, NgFor],
+  imports: [HeaderComponent, FooterComponent, NgClass, NgFor,CommonModule],
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss']
 })
@@ -34,6 +35,7 @@ export class ProductDetailComponent {
   ) { }
 
   ngOnInit() {
+    
     const idParam = this.activatedRoute.snapshot.paramMap.get('id');
     if (idParam !== null) {
       this.productId = +idParam;
@@ -81,15 +83,28 @@ export class ProductDetailComponent {
 
   addToCart(): void {
     if (this.product) {
-      this.cartService.addToCart(this.product.id, this.quantity); // Thêm vào giỏ hàng
-      this.isAddedToCart = true; // Đặt trạng thái giỏ hàng
+      // Lấy số lượng sản phẩm hiện có trong giỏ hàng
+      const currentCartQuantity = this.cartService.getCartQuantity(this.product.id) || 0;
+  
+      // Kiểm tra nếu tổng số lượng trong giỏ hàng cộng số lượng thêm vượt quá kho
+      if (currentCartQuantity + this.quantity > this.product.numberProduct) {
+        alert('Số lượng sản phẩm trong giỏ hàng vượt quá số lượng trong kho!');
+        return;
+      }
+  
+      // Thêm vào giỏ hàng nếu đủ điều kiện
+      this.cartService.addToCart(this.product.id, this.quantity, this.product.numberProduct); // Truyền stockQuantity
+      this.isAddedToCart = true;
+  
       setTimeout(() => {
-        this.isAddedToCart = false; // Ẩn thông báo sau 2 giây
+        this.isAddedToCart = false;
       }, 2000);
     } else {
       console.error('Không thể thêm sản phẩm vào giỏ hàng vì sản phẩm không hợp lệ.');
     }
   }
+  
+  
 
   increaseQuantity() {
     if (this.product && this.quantity < this.product.numberProduct) {
@@ -110,14 +125,21 @@ export class ProductDetailComponent {
 
   buyNow(): void {
     if (this.product) {
-      this.cartService.addToCart(this.product.id, this.quantity); // Thêm vào giỏ hàng
-      this.isAddedToCart = true; // Đặt trạng thái giỏ hàng
+      // Lấy số lượng sản phẩm trong kho (stockQuantity)
+      const stockQuantity = this.product.numberProduct;
+  
+      // Gọi phương thức addToCart với tham số stockQuantity
+      this.cartService.addToCart(this.product.id, this.quantity, stockQuantity);
+      this.isAddedToCart = true;
+  
       setTimeout(() => {
-        this.isAddedToCart = false; // Ẩn thông báo sau 2 giây
+        this.isAddedToCart = false;
       }, 2000);
+  
+      // Điều hướng tới trang đơn hàng
+      this.router.navigate(['/orders']);
     } else {
       console.error('Không thể thêm sản phẩm vào giỏ hàng vì sản phẩm không hợp lệ.');
     }
-    this.router.navigate(['/orders']); // Mua ngay, chuyển hướng tới trang đơn hàng
   }
-}
+}  

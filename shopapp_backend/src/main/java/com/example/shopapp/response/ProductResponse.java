@@ -33,9 +33,12 @@ public class ProductResponse extends BaseResponse {// productResponse là nơi �
     private Float price;
     private String thumbnail;
     //    private String size;
-    private String color;
+    @JsonProperty("color_id")
+    private String colorId;
     private String description;
     private int numberProduct;
+    private String namecolor;
+    private String namesize;
     private Boolean active;
     private int totalPages;
     @JsonProperty("product_images")
@@ -44,7 +47,7 @@ public class ProductResponse extends BaseResponse {// productResponse là nơi �
     @JsonProperty("category_id")
     private Long categoryId;
     @JsonProperty("size_id")
-    private String sizeName;
+    private String sizeId;
 
     public static ProductResponse fromProduct(Product product) {
         ProductResponse productResponse = ProductResponse.builder()
@@ -53,24 +56,21 @@ public class ProductResponse extends BaseResponse {// productResponse là nơi �
                 .price(product.getPrice())
                 .thumbnail(product.getThumbnail())
                 .numberProduct(product.getNumberProduct())
-//                 .size(product.getSize())
-                .color(product.getColor())
+                .namecolor(product.getColor() != null ? product.getColor().getName() : null)
+                .namesize(product.getSize() != null ? product.getSize().getName() : null)
+                .colorId(product.getColor() != null ? product.getColor().getId().toString() : null)
+                .sizeId(product.getSize() != null ? product.getSize().getId().toString() : null)
                 .active(product.getActive())
                 .description(product.getDescription())
                 .categoryId(product.getCategory().getId())
-                .sizeName(product.getSize().getName())
                 .productImages(product.getProductImages())
                 .build();
-        // Chọn một hình ảnh ngẫu nhiên (hoặc hình ảnh đầu tiên) từ danh sách
-//        if (!product.getProductImages().isEmpty()) {
-//            List<ProductImage> images = product.getProductImages();
-//            // Ví dụ: chọn hình ảnh đầu tiên
-//            productResponse.setProductImages(Collections.singletonList(images.get(0))); // Hoặc chọn ngẫu nhiên nếu muốn
-//        } else {
-//            productResponse.setProductImages(Collections.emptyList()); // Nếu không có hình ảnh
-//        }
+
+        // Thiết lập ngày tạo và cập nhật
         productResponse.setCreateAt(product.getCreateAt());
         productResponse.setUpdatedAt(product.getUpdateAt());
+
         return productResponse;
     }
+
 }

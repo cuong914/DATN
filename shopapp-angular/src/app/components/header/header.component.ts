@@ -73,7 +73,7 @@ export class HeaderComponent implements OnInit {
     if (index === 0) {
       this.router.navigate(['/user-profile']);
     } else if (index === 1) {
-      this.router.navigate([`/order-detail`]); // Điều hướng tới OrderDetailComponent
+      this.router.navigate([`/order/detail/:id`]); // Điều hướng tới OrderDetailComponent
     } else if (index === 2) { // Đăng xuất
       this.userService.removeUserFromLocalStorage();
       this.tokenService.removeToken();

@@ -14,6 +14,8 @@ import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
 import Swal from 'sweetalert2';
 import { Size } from "../../../../models/size";
 import { SizeService } from "../../../../service/size.service";
+import { ColorService } from "../../../../service/color.service";
+import { Color } from "../../../../models/color";
 
 @Component({
     selector: 'app-detail.product.admin',
@@ -32,6 +34,7 @@ import { SizeService } from "../../../../service/size.service";
     updatedProduct: Product;
     categories: Category[] = [];
    sizes: Size[] = [];
+   colors: Color[]=[];
     // Dữ liệu động từ categoryService
     currentImageIndex: number = 0;
     images: File[] = [];
@@ -42,6 +45,7 @@ import { SizeService } from "../../../../service/size.service";
       private router: Router,
       private categoryService: CategoryService,   
       private sizeService : SizeService, 
+      private colorService : ColorService,
     //   private location: Location,
     ) {
       this.productId = 0;
@@ -56,6 +60,7 @@ import { SizeService } from "../../../../service/size.service";
       });
       this.getCategories(1, 100);
       this.getSizes(1,100);
+      this.getColors(1,100);
     }
     getCategories(page: number, limit: number) {
       this.categoryService.getCategories(page, limit).subscribe({
@@ -75,14 +80,23 @@ import { SizeService } from "../../../../service/size.service";
     getSizes(page: number, limit: number) {
       this.sizeService.getSizes(page, limit).subscribe({
         next: (sizes: Size[]) => {
-          debugger
+          console.log("Sizes:", sizes); // Kiểm tra sizes
           this.sizes = sizes;
-        },
-        complete: () => {
-          debugger;
         },
         error: (error: any) => {
           console.error('Error fetching size:', error);
+        }
+      });
+    }
+    
+    getColors(page: number, limit: number) {
+      this.colorService.getColors(page, limit).subscribe({
+        next: (colors: Color[]) => {
+          console.log("Colors:", colors); // Kiểm tra colors
+          this.colors = colors;
+        },
+        error: (error: any) => {
+          console.error('Error fetching colors:', error);
         }
       });
     }
@@ -116,7 +130,7 @@ import { SizeService } from "../../../../service/size.service";
         numberProduct: this.updatedProduct.numberProduct,
         description: this.updatedProduct.description,
         size_id : this.updatedProduct.size_id,
-        color : this.updatedProduct.color,
+        color_id : this.updatedProduct.color_id,
         category_id: this.updatedProduct.category_id
       };
     

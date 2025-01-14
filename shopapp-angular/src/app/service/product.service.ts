@@ -18,16 +18,16 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   getProducts(keyword:string, categoryId:number, 
-    page: number, limit: number
-): Observable<ApiResponse> {
-debugger
-const params = new HttpParams()
-.set('keyword', keyword)
-.set('category_id', categoryId)
-.set('page', page.toString())
-.set('limit', limit.toString());            
-return this.http.get<ApiResponse>(this.apiGetProducts, { params });
-}
+              page: number, limit: number
+    ): Observable<ApiResponse> {
+      debugger
+    const params = new HttpParams()
+      .set('keyword', keyword)
+      .set('category_id', categoryId)
+      .set('page', page.toString())
+      .set('limit', limit.toString());            
+    return this.http.get<ApiResponse>(this.apiGetProducts, { params });
+  }
 
   getDetailProductsssss(productId: number): Observable<ApiResponse> {
     debugger

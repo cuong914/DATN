@@ -34,6 +34,9 @@ import { StatisticalAdminComponent } from './app/components/admin/statistical/st
 import { SizeAdminComponent } from './app/components/admin/size/size.admin.component';
 import { InsertSizeAdminComponent } from './app/components/admin/size/insert-size/insert.size.admin.component';
 import { UpdateSizeAdminComponent } from './app/components/admin/size/update-size/update.size.admin.component';
+import { ColorAdminComponent } from './app/components/admin/color/color.admin.component';
+import { InsertColorAdminComponent } from './app/components/admin/color/insert-color/insert.color.admin.component';
+import { UpdateColorAdminComponent } from './app/components/admin/color/update-color/update.color.admin.component';
 
  // if(environment.product){
 //     enableProdMode();
@@ -49,7 +52,7 @@ const routes: Routes = [
   { path: 'products/:id', component: ProductDetailComponent },  
   { path: 'orders', component: OrderComponent,canActivate:[AuthGuardFn] },
   { path: 'user-profile', component: UserProfileComponent, canActivate:[AuthGuardFn] },
-  { path: 'orders/:id', component: OrderDetailComponent },
+  { path: 'order/detail/:id', component: OrderDetailComponent },
 
   //Admin   
   { 
@@ -64,6 +67,9 @@ const routes: Routes = [
       { path: 'sizes', component: SizeAdminComponent },
       { path: 'sizes/insert', component: InsertSizeAdminComponent },
       { path: 'sizes/update/:id', component: UpdateSizeAdminComponent },
+      { path: 'colors', component: ColorAdminComponent },
+      { path: 'colors/insert', component: InsertColorAdminComponent },
+      { path: 'colors/update/:id', component: UpdateColorAdminComponent },
       { path: 'categories/insert', component: InsertCategoryAdminComponent },
       { path: 'categories/update/:id', component: UpdateCategoryAdminComponent },
       { path: 'products/insert', component: InsertProductAdminComponent },

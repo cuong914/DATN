@@ -31,7 +31,8 @@ public class ProductDTO {
     private Float price;
     private String thumbnail;
     private String description;
-    private String color;
+    @JsonProperty("color_id")
+    private Long colorId;
     private Boolean active;
     private Integer numberProduct;
     @JsonProperty("category_id")

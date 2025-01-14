@@ -6,7 +6,7 @@ export class UpdateProductDTO {
 
     // size: string;
 
-    color: string;
+    color_id: number;
 
 
     price: number;
@@ -20,6 +20,7 @@ export class UpdateProductDTO {
     description: string;
 
     category_id: number;
+
     size_id: number;
 
     constructor(data: any) {
@@ -30,6 +31,6 @@ export class UpdateProductDTO {
         this.numberProduct = data.numberProduct;
         this.active = data.active;
         this.size_id= data.size_id;
-        this.color = data.color;
+        this.color_id = data.color_id;
     }
 }

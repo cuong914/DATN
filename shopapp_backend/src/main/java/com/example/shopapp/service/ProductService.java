@@ -5,10 +5,12 @@ import com.example.shopapp.dtos.ProductImageDTO;
 import com.example.shopapp.exception.DaTanotFoundException;
 import com.example.shopapp.exception.InvalidParamException;
 import com.example.shopapp.models.Category;
+import com.example.shopapp.models.Color;
 import com.example.shopapp.models.Product;
 import com.example.shopapp.models.ProductImage;
 import com.example.shopapp.models.Size;
 import com.example.shopapp.repositorys.CategoryRepository;
+import com.example.shopapp.repositorys.ColorRepository;
 import com.example.shopapp.repositorys.ProductImageReponsitory;
 import com.example.shopapp.repositorys.ProductRepository;
 import com.example.shopapp.repositorys.SizeRepository;
@@ -31,6 +33,7 @@ public class  ProductService implements IProductService {
     //    private final ProductImageReponsitory productImageReponsitory;
     private final CategoryRepository categoryRepository;
     private final SizeRepository sizeRepository;
+    private final ColorRepository colorRepository;
     private final ProductImageReponsitory productImageReponsitory;
 
 
@@ -68,12 +71,14 @@ public class  ProductService implements IProductService {
                 .orElseThrow(() -> new DaTanotFoundException("cannot find category with id:" + productDTO.getCategoryId()));
         Size existingSize = sizeRepository.findById(productDTO.getSizeId())
                 .orElseThrow(() -> new DaTanotFoundException("cannot find size with id:" + productDTO.getSizeId()));
+        Color existingColor = colorRepository.findById(productDTO.getColorId())
+                .orElseThrow(() -> new DaTanotFoundException("cannot find Color with id:" + productDTO.getColorId()));
         Product newProduct = Product.builder()
                 .name(productDTO.getName())
                 .price(productDTO.getPrice())
                 .thumbnail(productDTO.getThumbnail())
                 .description(productDTO.getDescription())
-                .color(productDTO.getColor())
+                .color(existingColor)
 //                .size(productDTO.getSize())
                 .numberProduct(productDTO.getNumberProduct())
                 .active(true)
@@ -107,7 +112,8 @@ public class  ProductService implements IProductService {
 
         return productPage.map(product -> {
             ProductResponse response = ProductResponse.fromProduct(product);
-            response.setSizeName(product.getSize().getName()); // Lấy tên kích thước từ Size
+            response.setSizeId(product.getSize() != null ? product.getSize().getName() : null);
+            response.setColorId(product.getColor() != null ? product.getColor().getName() : null);
             return response;
         });
     }
@@ -127,6 +133,8 @@ public class  ProductService implements IProductService {
             Size existingSize = sizeRepository.findById(productDTO.getSizeId())
                     .orElseThrow(() -> new DaTanotFoundException("cannot find size with id:" + productDTO.getSizeId()));
 
+            Color existingColor = colorRepository.findById(productDTO.getColorId())
+                    .orElseThrow(() -> new DaTanotFoundException("cannot find Color with id:" + productDTO.getColorId()));
 
             existingProduct.setName(productDTO.getName());
             existingProduct.setCategory(existingCategory);
@@ -136,7 +144,7 @@ public class  ProductService implements IProductService {
             existingProduct.setNumberProduct(productDTO.getNumberProduct());
             existingProduct.setDescription(productDTO.getDescription());
 //            existingProduct.setSize(productDTO.getSize());
-            existingProduct.setColor(productDTO.getColor());
+            existingProduct.setColor(existingColor);
             // existingProduct.setThumbnail(productDTO.getThumbnail());
             // còn phần file thì lưu tỏng bản productIamge
             // Lấy ảnh đầu tiên từ bảng product_image

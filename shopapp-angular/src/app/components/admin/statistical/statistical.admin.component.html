@@ -1,83 +1,95 @@
 <div class="container">
-        <h1 class="text-center mt-4 mb-5">Thống Kê Bán Hàng</h1>
-    
-        <div class="row mt-5">
-                <!-- Đơn hàng đã giao -->
-                <div class="col-md-3">
-                    <div class="card text-center bg-success text-white">
-                        <div class="card-body">
-                            <i class="fas fa-check-circle fa-3x mb-2"></i>
-                            <h3>{{ deliveredOrders }}</h3>
-                            <p>Đơn hàng đã giao</p>
-                        </div>
-                    </div>
-                </div>
-            
-                <!-- Đơn hàng đang chờ -->
-                <div class="col-md-3">
-                    <div class="card text-center bg-warning text-white">
-                        <div class="card-body">
-                            <i class="fas fa-hourglass-half fa-3x mb-2"></i>
-                            <h3>{{ pendingOrders }}</h3>
-                            <p>Đơn hàng đang chờ</p>
-                        </div>
-                    </div>
-                </div>
-            
-                <!-- Đơn hàng đã hủy -->
-                <div class="col-md-3">
-                    <div class="card text-center bg-danger text-white">
-                        <div class="card-body">
-                            <i class="fas fa-times-circle fa-3x mb-2"></i>
-                            <h3>{{ cancelledOrders }}</h3>
-                            <p>Đơn hàng đã hủy</p>
-                        </div>
-                    </div>
-                </div>
-            
-                <!-- Tổng doanh thu -->
-                <div class="col-md-3">
-                    <div class="card text-center bg-primary text-white">
-                        <div class="card-body">
-                            <i class="fas fa-dollar-sign fa-3x mb-2"></i>
-                            <h3>{{ totalRevenue }} VNĐ</h3>
-                            <p>Tổng doanh thu</p>
-                        </div>
-                    </div>
-                </div>
-            </div>    
-        <!-- Sản phẩm bán chạy -->
-        <div class="container mt-5">
-            <h3 class="text-center mb-4">SẢN PHẨM BÁN CHẠY</h3>
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <div class="p-4 border rounded shadow-sm bg-white">
-                        <canvas baseChart
-                            [data]="topProductsData"
-                            [options]="chartOptions"
-                            [type]="'bar'">
-                        </canvas>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="p-3 border rounded shadow-sm bg-white">
-                        <table class="table table-hover table-bordered">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>Sản phẩm</th>
-                                    <th>Số lượng bán</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let product of productDetails">
-                                    <td>{{ product.productName }}</td>
-                                    <td>{{ product.totalSold }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+    <h1 class="text-center mt-4 mb-5">Thống Kê Bán Hàng</h1>
+  
+    <form (ngSubmit)="loadOrderStatisticssearch()">
+      <div class="row">
+        <div class="col-md-3">
+          <label for="startDate">Từ ngày</label>
+          <input type="date" id="startDate" [(ngModel)]="startDate" name="startDate" class="form-control">
         </div>
+        <div class="col-md-3">
+          <label for="endDate">Đến ngày</label>
+          <input type="date" id="endDate" [(ngModel)]="endDate" name="endDate" class="form-control">
+        </div>
+        <div class="col-md-3">
+          <button type="submit" class="btn btn-primary mt-4">Tìm kiếm</button>
+        </div>
+      </div>
+    </form>
+  
+    <div class="row mt-5">
+      <div class="col-md-3">
+        <div class="card text-center bg-success text-white">
+          <div class="card-body">
+            <i class="fas fa-check-circle fa-3x mb-2"></i>
+            <h3>{{ deliveredOrders }}</h3>
+            <p>Đơn hàng đã giao</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card text-center bg-warning text-white">
+          <div class="card-body">
+            <i class="fas fa-hourglass-half fa-3x mb-2"></i>
+            <h3>{{ pendingOrders }}</h3>
+            <p>Đơn hàng đang chờ</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card text-center bg-danger text-white">
+          <div class="card-body">
+            <i class="fas fa-times-circle fa-3x mb-2"></i>
+            <h3>{{ cancelledOrders }}</h3>
+            <p>Đơn hàng đã hủy</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-3">
+        <div class="card text-center bg-primary text-white">
+          <div class="card-body">
+            <i class="fas fa-dollar-sign fa-3x mb-2"></i>
+            <h3>{{ totalRevenue | number: '1.0-0' }} VND</h3>
+            <p>Tổng doanh thu</p>
+          </div>
+        </div>
+      </div>
+    </div>    
+  
+    <div class="container mt-5">
+      <h3 class="text-center mb-4">SẢN PHẨM BÁN CHẠY</h3>
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <div class="p-4 border rounded shadow-sm bg-white">
+            <canvas baseChart
+                    [data]="topProductsData"
+                    [options]="chartOptions"
+                    [type]="'bar'">
+            </canvas>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="p-3 border rounded shadow-sm bg-white">
+            <table class="table table-hover table-bordered">
+              <thead class="table-dark">
+                <tr>
+                  <th>Sản phẩm</th>
+                  <th>Số lượng bán</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let product of productDetails">
+                  <td>{{ product.productName }}</td>
+                  <td>{{ product.totalSold }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
     </div>
-    
+  </div>
+  
