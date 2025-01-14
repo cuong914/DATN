@@ -17,6 +17,8 @@ import java.util.List;
 
 
 public interface IProductService {
+    void deleteProductImage(Long imageId) throws Exception;
+
     Product createProduct(ProductDTO productDTO) throws Exception;
 
     Product getProductById(long id) throws Exception;

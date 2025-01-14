@@ -7,6 +7,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { ApiResponse } from "../../../../responses/api.response";
 import { HttpErrorResponse } from "@angular/common/http";
 import { UpdateCategoryDTO } from "../../../../dtos/update.category.dto";
+import Swal from 'sweetalert2';
+
 
 @Component({
     selector: 'app-detail.category.admin',
@@ -42,37 +44,47 @@ import { UpdateCategoryDTO } from "../../../../dtos/update.category.dto";
       
     }
     
+    updateCategory() {
+      const updateCategoryDTO: UpdateCategoryDTO = {
+        name: this.updatedCategory.name,
+      };
+    
+      this.categoryService.updateCategory(this.updatedCategory.id, updateCategoryDTO).subscribe({
+        next: (response: any) => {
+          Swal.fire({
+            title: 'Cập nhật thành công!',
+            text: 'Danh mục đã được cập nhật.',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
+            this.router.navigate(['/admin/categories']);
+          });
+        },
+        error: (error: HttpErrorResponse) => {
+          Swal.fire({
+            title: 'Cập nhật thất bại!',
+            text: error?.error?.message || 'Đã có lỗi xảy ra khi cập nhật danh mục.',
+            icon: 'error',
+            confirmButtonText: 'Thử lại'
+          });
+        }
+      });
+    }
+    
     getCategoryDetails(): void {
       this.categoryService.getDetailCategory(this.categoryId).subscribe({
-        next: (apiResponse: ApiResponse) => {        
-          this.updatedCategory = { ...apiResponse.data };                        
-        },
-        complete: () => {
-          
+        next: (apiResponse: ApiResponse) => {
+          this.updatedCategory = { ...apiResponse.data };
         },
         error: (error: HttpErrorResponse) => {
-          debugger;
-          console.error(error?.error?.message ?? '');
-        } 
-      });     
-    }
-    updateCategory() {
-      // Implement your update logic here
-      const updateCategoryDTO: UpdateCategoryDTO = {
-        name: this.updatedCategory.name,      
-      };
-      this.categoryService.updateCategory(this.updatedCategory.id, updateCategoryDTO).subscribe({
-        next: (response: any) => {  
-          debugger        
-        },
-        complete: () => {
-          debugger;
-          this.router.navigate(['/admin/categories']);        
-        },
-        error: (error: HttpErrorResponse) => {
-          debugger;
-          console.error(error?.error?.message ?? '');
-        } 
-      });  
-    }  
+          Swal.fire({
+            title: 'Lỗi!',
+            text: 'Không thể tải thông tin danh mục.',
+            icon: 'error',
+            confirmButtonText: 'OK'
+          });
+        }
+      });
+    }    
   }

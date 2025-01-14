@@ -19,4 +19,7 @@ public class LoginResponse {
     @JsonProperty("token")
     private String token;
 
+    @JsonProperty("role")  // Thêm role vào response
+    private String role;
+
 }

@@ -1,6 +1,5 @@
 package com.example.shopapp.configuration;
 
-import com.example.shopapp.models.User;
 import com.example.shopapp.repositorys.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -8,14 +7,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -27,6 +25,7 @@ public class SecurityConfig {
     // nên cái đối tượng user của t  lámf sao cho nó cònig với cái user của jvava swing
     // thì lúc đố ta mới sử dụng đc cái phần auth, đăng nhập tức là các
     // request sau gửi kèm token sẽ đc đăng nhập k phải nhập lại password nữa
+
 
 
     @Bean
@@ -62,5 +61,4 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
 }

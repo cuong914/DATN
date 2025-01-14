@@ -34,97 +34,59 @@ public class UserService implements IUserService {
 
     @Override
     public User create(UserDTO userDTO) throws Exception {
-        String phoneNumber = userDTO.getPhoneNumber();
-        //kiểm tra xem sdt này tồn tại hayy chưa
-
-        if (userRepository.existsByPhoneNumber(phoneNumber)) {
-            throw new DataIntegrityViolationException("phone number already exists");
-        }
-        Role role = roleRepository.findById(userDTO.getRoleId()) // kiểm tra role
-                .orElseThrow(() -> new DaTanotFoundException("Role not found"));
-        if(role.getName().toUpperCase().equals(Role.ADMIN)){
-            throw new PeremissionDenyException("you can register a admin acount");
+        // Kiểm tra số điện thoại tồn tại
+        if (userRepository.existsByPhoneNumber(userDTO.getPhoneNumber())) {
+            throw new DataIntegrityViolationException("Số điện thoại đã tồn tại");
         }
 
-        // convert tuwf userdto sag user
+        // Gán role mặc định là 1 nếu không có roleId
+        Role role = roleRepository.findById(1L)
+                .orElseThrow(() -> new DaTanotFoundException("Vai trò không tồn tại"));
+
+        // Tạo tài khoản
         User newUser = User.builder()
                 .fullName(userDTO.getFullName())
                 .phoneNumber(userDTO.getPhoneNumber())
-                .password(userDTO.getPassword())// do đây là tạo mơi user nen sẽ có password
                 .address(userDTO.getAddress())
-                .dateOfBirth(userDTO.getDateOfBirth())
-                .facebookAccountId(userDTO.getFacebookAccountId())
-                .googleAccountId(userDTO.getGoogleAccountId())
+                .role(role)  // Gán role mặc định
+                .active(true)
                 .build();
 
-        newUser.setRole(role);
-        // kiểm tra xem nếu có accountId , khôn gyêu câu passw
-        if (userDTO.getFacebookAccountId() == 0 && userDTO.getGoogleAccountId() == 0) {
-            String password = userDTO.getPassword();
-            String encodePassword = passwordEncoder.encode(password);
-            newUser.setPassword(encodePassword);
-        }
+        // Mã hóa mật khẩu
+        String encodePassword = passwordEncoder.encode(userDTO.getPassword());
+        newUser.setPassword(encodePassword);
 
         return userRepository.save(newUser);
     }
 
     @Override
-    public String login(String phoneNumber, String password,Long roleId) throws Exception {
-        // do
-//        Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
-//        if (optionalUser.isEmpty()) {
-//            throw new DaTanotFoundException(locallizationUtils.getLocallizeMessage(MessageKeys.WRONG_PHONE_PASSWORD));
-//        }
-//        // return optionalUser.get();// muốn trả về jwt toekn
-//        User existingUser = optionalUser.get();
-//        // kiểm tra mk . với hệ thống của ta xem mk ok chưa trừ đăng nhập gg && fa thì ta mới phaỉ ktra passw
-//        if (existingUser.getFacebookAccountId() == 0 && existingUser.getGoogleAccountId() == 0) { // k phải đăng nhập bằng gg và fa thì mưới phải ktra  nếu đăng nhập = gg , fa thì thôi
-//            if (!passwordEncoder.matches(password, existingUser.getPassword())) {// check xem mk đã mã hóa có = trong đối tượng user hay k
-//                throw new BadCredentialsException(locallizationUtils.getLocallizeMessage(MessageKeys.WRONG_PHONE_PASSWORD)); //k trùng nahu ném ra lỗi này
-//            }
-//        }
-//        Optional<Role> optionalRole = roleRepository.findById(roleId);
-//        if(optionalRole.isEmpty() || !roleId.equals(existingUser.getRole().getId())) {
-//            throw new DaTanotFoundException(locallizationUtils.getLocallizeMessage(MessageKeys.ROLE_DOES_NOT_EXISTS));
-//        }
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-//                phoneNumber, password, existingUser.getAuthorities()
-//
-//        );
-//        // authenticate with java spring security
-//        authenticationManager.authenticate(authenticationToken);// ta truyền vào đối tượng  authenticationManger dưới dạng username(phonenumber) và password vậy nên ta cần tạo UsernamePasswordAuthenticationToken
-//        return jwtTokenUtil.genrateToken(existingUser);
+    public String login(String phoneNumber, String password) throws Exception {
         Optional<User> optionalUser = userRepository.findByPhoneNumber(phoneNumber);
-        if(optionalUser.isEmpty()) {
+        if (optionalUser.isEmpty()) {
             throw new DaTanotFoundException(locallizationUtils.getLocallizeMessage(MessageKeys.WRONG_PHONE_PASSWORD));
         }
-        //return optionalUser.get();//muốn trả JWT token ?
+
         User existingUser = optionalUser.get();
-        //check password
-        if (existingUser.getFacebookAccountId() == 0
-                && existingUser.getGoogleAccountId() == 0) {
-            if(!passwordEncoder.matches(password, existingUser.getPassword())) {
-                throw new BadCredentialsException(locallizationUtils.getLocallizeMessage(MessageKeys.WRONG_PHONE_PASSWORD));
-            }
+
+        // Kiểm tra mật khẩu
+        if (!passwordEncoder.matches(password, existingUser.getPassword())) {
+            throw new BadCredentialsException(locallizationUtils.getLocallizeMessage(MessageKeys.WRONG_PHONE_PASSWORD));
         }
-        Optional<Role> optionalRole = roleRepository.findById(roleId);
-        if(optionalRole.isEmpty() || !roleId.equals(existingUser.getRole().getId())) {
-            throw new DaTanotFoundException(locallizationUtils.getLocallizeMessage(MessageKeys.ROLE_DOES_NOT_EXISTS));
-        }
-        if(optionalUser.get().isActive()) {
+
+        if (!existingUser.isActive()) {
             throw new DaTanotFoundException(locallizationUtils.getLocallizeMessage(MessageKeys.USER_IS_LOCKED));
         }
+
+        // Xác thực và sinh token
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                phoneNumber, password,
-                existingUser.getAuthorities()
+                phoneNumber, password, existingUser.getAuthorities()
         );
 
-        //authenticate with Java Spring security
         authenticationManager.authenticate(authenticationToken);
+
+        // Trả về token JWT
         return jwtTokenUtil.genrateToken(existingUser);
-
     }
-
     @Override
     public User getUserDetailsFromToken(String token) throws Exception {
         if(jwtTokenUtil.isTokenExpired(token)) {

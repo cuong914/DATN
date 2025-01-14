@@ -2,9 +2,14 @@ import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { CategoryService } from "../../../service/category.service";
 import { Category } from "../../../models/category";
+import { CommonModule } from "@angular/common";
+import Swal from 'sweetalert2';
+
 
 @Component({
     selector: 'app-category-admin',
+    standalone: true,
+    imports: [CommonModule],
     templateUrl: './category.admin.component.html',
     styleUrls: ['./category.admin.component.scss',        
     ]
@@ -44,27 +49,41 @@ import { Category } from "../../../models/category";
         debugger      
         this.router.navigate(['/admin/categories/update', categoryId]);
       }  
-      deleteCategory(category: Category) {      
-        const confirmation = window
-        .confirm('Are you sure you want to delete this category?');
-        if (confirmation) {
-          debugger
+      trackByCategoryId(index: number, category: any): number {
+        return category.id;
+    }
+    
+    deleteCategory(category: Category) {      
+      Swal.fire({
+        title: 'Bạn có chắc chắn?',
+        text: 'Danh mục sẽ bị xóa và không thể khôi phục!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
           this.categoryService.deleteCategory(category.id).subscribe({
             next: (response: string) => {
-              debugger 
-              alert('Xóa thành công')
-              this.router.navigate(['/admin/categories']);
-              location.reload();          
-            },
-            complete: () => {
-              debugger;          
+              Swal.fire(
+                'Đã xóa!',
+                'Danh mục đã được xóa thành công.',
+                'success'
+              );
+              this.getCategories(0, 100); // Tải lại danh sách sau khi xóa
             },
             error: (error: any) => {
-              debugger;
-              alert(error.error)
-              console.error('Error fetching categories:', error);
+              Swal.fire(
+                'Lỗi!',
+                'Không thể xóa danh mục. Vui lòng thử lại.',
+                'error'
+              );
+              console.error('Error deleting category:', error);
             }
-          });  
-        }      
-      }
+          });
+        }
+      });
+  }  
   }

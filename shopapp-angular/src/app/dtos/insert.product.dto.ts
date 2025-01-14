@@ -4,6 +4,11 @@ export class InsertProductDTO {
     @IsPhoneNumber()
     name: string;
 
+    // size: string;
+
+    color: string;
+
+
     price: number;
 
     active :boolean;
@@ -15,6 +20,7 @@ export class InsertProductDTO {
     description: string;
 
     category_id: number;
+    size_id: number;
     images: File[] = [];
     
     constructor(data: any) {
@@ -24,5 +30,7 @@ export class InsertProductDTO {
         this.category_id = data.category_id;
         this.numberProduct = data.numberProduct;
         this.active = data.active;
+        this.size_id = data.size_id;
+        this.color = data.color;
     }
 }

@@ -16,9 +16,11 @@ import com.example.shopapp.repositorys.OrderDetailRepository;
 import com.example.shopapp.repositorys.OrderRepository;
 import com.example.shopapp.repositorys.ProductRepository;
 import com.example.shopapp.repositorys.UserRepository;
+import com.example.shopapp.request.OrderRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -48,13 +50,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrderService implements IOrderService {
-    private final CuponReponsitory cuponReponsitory;
-    private final UserRepository userRepository;
-    private final OrderRepository orderRepository;
-    private final ModelMapper modelMapper;
-    private  final ProductRepository productRepository;
-    private  final OrderDetailRepository orderDetailRepository;
+    @Autowired
+    private CuponReponsitory cuponReponsitory;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
+    private OrderRepository orderRepository;
 
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 //    @Override
 //    @Transactional
 //    public Order createOrder(OrderDTO orderDTO) throws Exception {
@@ -127,7 +136,7 @@ public class OrderService implements IOrderService {
 
         Order order = modelMapper.map(orderDTO, Order.class);
         order.setUser(user);
-        order.setOrderDate(LocalDate.now());
+        order.setOrderDate(LocalDateTime.now());
         order.setStatus(OrderStatus.PENDING);
         order.setPayment_Method(orderDTO.getPaymentMethod());
 
@@ -149,8 +158,20 @@ public class OrderService implements IOrderService {
             try {
                 product = productRepository.findById(cartItemDTO.getProductId())
                         .orElseThrow(() -> new DaTanotFoundException("Product not found with id: " + cartItemDTO.getProductId()));
+
+                // Kiểm tra số lượng sản phẩm có đủ không
+                if (product.getNumberProduct() < cartItemDTO.getQuantity()) {
+                    throw new DaTanotFoundException("Not enough quantity for product with id: " + cartItemDTO.getProductId());
+                }
+
+                // Trừ số lượng sản phẩm
+                product.setNumberProduct(product.getNumberProduct() - cartItemDTO.getQuantity());
+                productRepository.save(product);
+
             } catch (DaTanotFoundException e) {
+                // Log lỗi hoặc xử lý ngoại lệ
                 e.printStackTrace();
+                throw new RuntimeException("Failed to process product with id: " + cartItemDTO.getProductId(), e);
             }
 
             orderDetail.setProduct(product);
@@ -159,6 +180,7 @@ public class OrderService implements IOrderService {
 
             return orderDetail;
         }).collect(Collectors.toList());
+
         orderDetailRepository.saveAll(orderDetails);
 
         String couponCode = orderDTO.getCouponCode();
@@ -175,10 +197,17 @@ public class OrderService implements IOrderService {
             order.setCoupon(null);
         }
 
+        // Tính tổng tiền đơn hàng
+        double totalMoney = orderDetails.stream()
+                .mapToDouble(detail -> detail.getPrice() * detail.getNumberOfProducts())
+                .sum();
+        order.setTotalMoney(totalMoney);
+
         orderRepository.save(order);
 
         return order;
     }
+
 
 
     @Override
@@ -223,7 +252,8 @@ public class OrderService implements IOrderService {
 
     @Override
     public Page<Order> getOrdersByKeyword(String keyword, Pageable pageable) {
-        return orderRepository.findByKeyword(keyword, pageable);
+        Page<Order> orders = orderRepository.findByKeyword(keyword, pageable);
+        return orders;
     }
 
 

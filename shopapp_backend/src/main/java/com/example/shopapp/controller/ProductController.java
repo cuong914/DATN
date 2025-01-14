@@ -59,6 +59,26 @@ public class ProductController {
     private final IProductService productService;
     private final LocallizationUtils locallizationUtils;
 
+    @DeleteMapping("/deleted/images/{id}")
+    public ResponseEntity<ResponseObject> deleteProductImage(
+            @PathVariable("id") Long imageId) {
+        try {
+            productService.deleteProductImage(imageId);
+            return ResponseEntity.ok(ResponseObject.builder()
+                    .data(null)
+                    .message(String.format("Image with id = %d deleted successfully", imageId))
+                    .status(HttpStatus.OK)
+                    .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(ResponseObject.builder()
+                            .message("Failed to delete image: " + e.getMessage())
+                            .status(HttpStatus.BAD_REQUEST)
+                            .build());
+        }
+    }
+
+
     @PostMapping(value = "")
     public ResponseEntity<?> insertProduct(@Valid @RequestBody
                                                    ProductDTO productDTO,
@@ -182,7 +202,7 @@ public class ProductController {
             @RequestParam(defaultValue = "") String  keyword, // go cai j thi search theo cai do
             @RequestParam(defaultValue = "0",name = "category_id") Long categoryId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int limit
+            @RequestParam(defaultValue = "5") int limit
     ) {
 
         int totalPages = 0;
@@ -191,7 +211,7 @@ public class ProductController {
                , Sort.by("createAt").descending());
 //                // sap xep theo thu tu giam dan (tu moi -> cu)
                //    , Sort.by("id").ascending()); // sắp xêps theo id tăng dần
-        Page<ProductResponse> productPage = productService.getAllProducts(keyword, categoryId,pageRequest);
+         Page<ProductResponse> productPage = productService.getAllProducts(keyword, categoryId,pageRequest);
         // lay tong so trang
         totalPages = productPage.getTotalPages();// getTotalPages co san chir vc goi ra sd
         List<ProductResponse> products = productPage.getContent();//lay danh sach product

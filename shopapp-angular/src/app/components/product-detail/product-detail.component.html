@@ -2,7 +2,6 @@
 <div class="container">
     <div class="intro-section">
         <h1>Đây là trang chi tiết sản phẩm</h1>
-        <p>Sử dụng Bootstrap</p>
     </div>    
     <div class="row">
       <div class="col-md-6">
@@ -42,6 +41,8 @@
           <h2>{{ product?.name }}</h2>
           <p>{{ product?.description }}</p>
           <p>Giá: ${{ product?.price }}</p>
+          <p>Số Lượng :{{ product?.numberProduct }}</p>
+          <p>Size :{{ product?.size_id }}</p>
           <div class="product-actions">
             <button class="btn btn-primary" (click)="addToCart()">Thêm vào giỏ hàng</button>
             <button class="btn btn-success" (click)="buyNow()">Mua ngay</button>

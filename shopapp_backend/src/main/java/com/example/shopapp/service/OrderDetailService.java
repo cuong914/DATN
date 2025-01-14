@@ -23,6 +23,21 @@ public class OrderDetailService implements IOrderDetailService {
     private final OrderRepository orderRepository;
 
     @Transactional
+    public void handleCancelledOrder(Long orderId) {
+        // Lấy danh sách các OrderDetail theo OrderId
+        List<OrderDetail> orderDetails = orderDetailRepository.findByOrderId(orderId);
+
+        for (OrderDetail orderDetail : orderDetails) {
+            // Cập nhật số lượng sản phẩm trong kho
+            Product product = orderDetail.getProduct();
+            int updatedQuantity = product.getNumberProduct() + orderDetail.getNumberOfProducts();
+            product.setNumberProduct(updatedQuantity);
+            productRepository.save(product);
+        }
+    }
+
+
+    @Transactional
     @Override
     public OrderDetail createOrderService(OrderDetailDTO orderDetailDTO) throws Exception {
         Order order = orderRepository.findById(orderDetailDTO.getOrderId())

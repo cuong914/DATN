@@ -91,9 +91,16 @@ export class ProductDetailComponent {
     }
   }
 
-  increaseQuantity(): void {
-    this.quantity++; // Tăng số lượng
+  increaseQuantity() {
+    if (this.product && this.quantity < this.product.numberProduct) {
+      this.quantity++;
+    } else if (!this.product) {
+      alert('Thông tin sản phẩm không hợp lệ.');
+    } else {
+      alert('Bạn không thể mua vượt quá số lượng trong kho!');
+    }
   }
+  
 
   decreaseQuantity(): void {
     if (this.quantity > 1) {

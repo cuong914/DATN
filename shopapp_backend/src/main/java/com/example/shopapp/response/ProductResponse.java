@@ -32,6 +32,8 @@ public class ProductResponse extends BaseResponse {// productResponse là nơi �
     private String name;
     private Float price;
     private String thumbnail;
+    //    private String size;
+    private String color;
     private String description;
     private int numberProduct;
     private Boolean active;
@@ -41,6 +43,8 @@ public class ProductResponse extends BaseResponse {// productResponse là nơi �
 
     @JsonProperty("category_id")
     private Long categoryId;
+    @JsonProperty("size_id")
+    private String sizeName;
 
     public static ProductResponse fromProduct(Product product) {
         ProductResponse productResponse = ProductResponse.builder()
@@ -49,9 +53,12 @@ public class ProductResponse extends BaseResponse {// productResponse là nơi �
                 .price(product.getPrice())
                 .thumbnail(product.getThumbnail())
                 .numberProduct(product.getNumberProduct())
+//                 .size(product.getSize())
+                .color(product.getColor())
                 .active(product.getActive())
                 .description(product.getDescription())
                 .categoryId(product.getCategory().getId())
+                .sizeName(product.getSize().getName())
                 .productImages(product.getProductImages())
                 .build();
         // Chọn một hình ảnh ngẫu nhiên (hoặc hình ảnh đầu tiên) từ danh sách

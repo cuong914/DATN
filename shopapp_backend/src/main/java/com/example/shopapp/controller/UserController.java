@@ -17,13 +17,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cglib.core.Local;
 import org.springframework.context.MessageSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,62 +48,77 @@ public class UserController {
     private final IUserService userService;
     private final LocallizationUtils locallizationUtils;
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> createUser(
+    public ResponseEntity<RegisterResponse> registerUser(
             @Valid @RequestBody UserDTO userDTO,
             BindingResult result
     ) {
-        RegisterResponse registerResponse = new RegisterResponse();
+        RegisterResponse response = new RegisterResponse();
         try {
+            // Xử lý lỗi đầu vào
             if (result.hasErrors()) {
-                List<String> errorMessages = result.getFieldErrors()
+                List<String> errors = result.getFieldErrors()
                         .stream()
                         .map(fieldError -> fieldError.getDefaultMessage())
                         .toList();
-                registerResponse.setMessage(errorMessages.toString());
-                return ResponseEntity.badRequest().body(registerResponse);
+                response.setMessage(String.join(", ", errors));
+                return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);  // 422 Unprocessable Entity
             }
-            if (!userDTO.getPassword().equals(userDTO.getRetypePassword())) {
-                registerResponse.setMessage(locallizationUtils.getLocallizeMessage(MessageKeys.PASSWORD_NOT_MATCH));
-                return ResponseEntity.badRequest().body(registerResponse);
-            }
+
+            // Đăng ký tài khoản
             User user = userService.create(userDTO);
-            //return ResponseEntity.ok("register successfully");
-            registerResponse.setMessage(locallizationUtils.getLocallizeMessage(MessageKeys.REGISTER_SUCCESSFULLY));
-            registerResponse.setUser(user);
-            return ResponseEntity.ok(registerResponse);
+            response.setMessage("Đăng ký tài khoản thành công!");
+            response.setUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);  // 201 Created
+
+        } catch (DataIntegrityViolationException e) {
+            // Lỗi vi phạm ràng buộc cơ sở dữ liệu (ví dụ: số điện thoại đã tồn tại)
+            response.setMessage("Lỗi: Số điện thoại đã tồn tại");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(response);  // 409 Conflict
         } catch (Exception e) {
-            registerResponse.setMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(registerResponse);
+            response.setMessage("Lỗi hệ thống: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);  // 500 Internal Server Error
         }
     }
 
+
+    // Đăng nhập người dùng (KHÔNG cần role_id)
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
-            @Valid @RequestBody UserLoginDTO userLoginDTO
-          ) {
-        // kiểm tra thông tin đăng nhập và sinh token
+            @Valid @RequestBody UserLoginDTO userLoginDTO) {
         try {
+            // Xác thực và tạo token
             String token = userService.login(
                     userLoginDTO.getPhoneNumber(),
-                    userLoginDTO.getPassword(),
-                    userLoginDTO.getRoleId() == null ? 1 : userLoginDTO.getRoleId()
+                    userLoginDTO.getPassword()
             );
 
-            return ResponseEntity.ok(LoginResponse.builder()                                                    // đoạn này là yêu cầu trả về thông báo
-                    .message(locallizationUtils.getLocallizeMessage(MessageKeys.LOGIN_SUCCESSFULLY))    //  = tiếng anh hoặc tiếng vvieetj
-                    .token(token)                                                                                //
-                    .build()
-              );
+            // Lấy thông tin người dùng từ token
+            User user = userService.getUserDetailsFromToken(token);
+
+            // Trả về thông tin đăng nhập bao gồm cả role
+            return ResponseEntity.ok(LoginResponse.builder()
+                    .message(locallizationUtils.getLocallizeMessage(MessageKeys.LOGIN_SUCCESSFULLY))
+                    .token(token)
+                    .role(user.getRole().getName())
+                    .build());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    LoginResponse.builder()
-                            .message(locallizationUtils.getLocallizeMessage(MessageKeys.LOGIN_FAILED,e.getMessage()))
-                            .build()
-            );
-            // throw new RuntimeException(e);
+            throw new BadCredentialsException(locallizationUtils.getLocallizeMessage(
+                    MessageKeys.LOGIN_FAILED, e.getMessage()));
         }
-        // trả và token trong response
+    }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<LoginResponse> handleBadCredentials(BadCredentialsException e) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(LoginResponse.builder()
+                .message(e.getMessage())
+                .build());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<LoginResponse> handleGeneralException(Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(LoginResponse.builder()
+                .message("Internal server error: " + e.getMessage())
+                .build());
     }
     @PostMapping("/details")
     public ResponseEntity<UserResponse> getUserDetails(

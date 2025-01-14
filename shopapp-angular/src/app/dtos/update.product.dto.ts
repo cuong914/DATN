@@ -4,6 +4,11 @@ export class UpdateProductDTO {
     @IsPhoneNumber()
     name: string;
 
+    // size: string;
+
+    color: string;
+
+
     price: number;
 
     active :boolean;
@@ -15,6 +20,7 @@ export class UpdateProductDTO {
     description: string;
 
     category_id: number;
+    size_id: number;
 
     constructor(data: any) {
         this.name = data.name;
@@ -23,5 +29,7 @@ export class UpdateProductDTO {
         this.category_id = data.category_id;
         this.numberProduct = data.numberProduct;
         this.active = data.active;
+        this.size_id= data.size_id;
+        this.color = data.color;
     }
 }

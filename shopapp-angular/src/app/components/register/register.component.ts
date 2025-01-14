@@ -1,60 +1,59 @@
-
 import { Component, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../service/user.service';
 import { RegisterDTO } from '../../dtos/register.dto';
-
+import Swal from 'sweetalert2';  // Import SweetAlert2
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports : [NgIf,FormsModule],
+  imports : [NgIf, FormsModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   @ViewChild('registerForm') registerForm!: NgForm;
-  // Khai báo các biến tương ứng với các trường dữ liệu trong form
-  phoneNumber: string;
-  password: string;
-  retypePassword: string;
-  fullName: string;
-  address:string;
-  isAccepted: boolean;
-  dateOfBirth: Date;
+  
+  phoneNumber: string = '';
+  password: string = '';
+  retypePassword: string = '';
+  fullName: string = '';
+  address: string = '';
+  isAccepted: boolean = true;
+  dateOfBirth: Date = new Date();
 
-  constructor(private router: Router, private userService: UserService){
-    this.phoneNumber = '';
-    this.password = '';
-    this.retypePassword = '';
-    this.fullName = '';
-    this.address = '';
-    this.isAccepted = true;
-    this.dateOfBirth = new Date();
+  constructor(private router: Router, private userService: UserService) {
+    // Mặc định ngày sinh - 18 tuổi
     this.dateOfBirth.setFullYear(this.dateOfBirth.getFullYear() - 18);
-    //inject
+  }
 
+  onPhoneNumberChange() {
+    console.log(`Phone typed: ${this.phoneNumber}`);
   }
-  onPhoneNumberChange(){
-    console.log(`Phone typed: ${this.phoneNumber}`)
-    //how to validate ? phone must be at least 6 characters
-  }
+
   register() {
-    const message = `phone: ${this.phoneNumber}`+
-                    `password: ${this.password}`+
-                    `retypePassword: ${this.retypePassword}`+
-                    `address: ${this.address}`+
-                    `fullName: ${this.fullName}`+
-                    `isAccepted: ${this.isAccepted}`+
-                    `dateOfBirth: ${this.dateOfBirth}`;
-    //alert(message);
-    debugger
-    
-    const registerDTO:RegisterDTO = {
+    if (!this.registerForm.valid) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: 'Vui lòng kiểm tra lại các trường thông tin!'
+      });
+      return;
+    }
+
+    if (this.password !== this.retypePassword) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Mật khẩu không khớp!',
+        text: 'Vui lòng nhập lại đúng mật khẩu.'
+      });
+      return;
+    }
+
+    const registerDTO: RegisterDTO = {
         "fullname": this.fullName,
         "phone_number": this.phoneNumber,
         "address": this.address,
@@ -62,23 +61,37 @@ export class RegisterComponent {
         "retype_password": this.retypePassword,
         "date_of_birth": this.dateOfBirth,
         "facebook_account_id": 0,
-        "google_account_id": 0,
-        "role_id": 1
+        "google_account_id": 0
     }
+
     this.userService.register(registerDTO).subscribe({
         next: (response: any) => {
-          debugger
-          this.router.navigate(['/login']);          
+          Swal.fire({
+            icon: 'success',
+            title: 'Đăng ký thành công!',
+            text: 'Chúc mừng bạn đã tạo tài khoản thành công!'
+          }).then(() => {
+            this.router.navigate(['/login']);
+          });        
         },
-        complete: () => {
-          debugger
-        },
-        error: (error: any) => {          
-          alert(`Cannot register, error: ${error.error}`)          
+        error: (error: any) => {  
+          let errorMessage = 'Có lỗi xảy ra, vui lòng thử lại!';
+          if (error.status === 409) {
+            errorMessage = 'Số điện thoại đã tồn tại, vui lòng thử lại!';
+          } else if (error.status === 422) {
+            errorMessage = 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại các trường thông tin.';
+          } else {
+            errorMessage = `Chi tiết lỗi: ${error.error?.message || 'Lỗi không xác định'}`;
+          }
+          Swal.fire({
+            icon: 'error',
+            title: 'Đăng ký thất bại!',
+            text: errorMessage
+          });
         }
     })   
   }
-  //how to check password match ?
+
   checkPasswordsMatch() {    
     if (this.password !== this.retypePassword) {
       this.registerForm.form.controls['retypePassword']
@@ -87,6 +100,7 @@ export class RegisterComponent {
       this.registerForm.form.controls['retypePassword'].setErrors(null);
     }
   }
+
   checkAge() {
     if (this.dateOfBirth) {
       const today = new Date();
@@ -103,5 +117,9 @@ export class RegisterComponent {
         this.registerForm.form.controls['dateOfBirth'].setErrors(null);
       }
     }
+  }
+
+  navigateToLogin() {
+    this.router.navigate(['/login']);
   }
 }

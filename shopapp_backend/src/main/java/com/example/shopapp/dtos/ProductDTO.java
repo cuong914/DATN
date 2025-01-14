@@ -31,10 +31,13 @@ public class ProductDTO {
     private Float price;
     private String thumbnail;
     private String description;
+    private String color;
     private Boolean active;
     private Integer numberProduct;
     @JsonProperty("category_id")
     private Long categoryId;
+    @JsonProperty("size_id")
+    private Long sizeId;
 
 
     //private List <MultipartFile> files; thay bằng modelattribute("file")

@@ -22,6 +22,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class HomeComponent implements OnInit{
   
+  
   products: Product[] = [];
   categories: Category[] = []; // Dữ liệu động từ categoryService
   selectedCategoryId: number  = 0; // Giá trị category được chọn
@@ -65,91 +66,50 @@ export class HomeComponent implements OnInit{
     debugger
     this.getProducts(this.keyword.trim(), this.selectedCategoryId, this.currentPage, this.itemsPerPage);
 
-    // this.getProducts(this.keyword,
-    //    this.selectedCategoryId,
-    //     this.currentPage, this.itemsPerPage);
   }
-//   getProducts(keyword: string, selectedCategoryId: number, page: number, limit: number) {
-//     debugger
-//     this.productService.getProducts(keyword, selectedCategoryId, page, limit).subscribe({
-//       next: (response: any) => {
-//         debugger
-//         response.products.forEach((product: Product) => {          
-//           product.url = `${environment.apiBaseurl}/products/images/${product.thumbnail}`;
-//         });
-//     //     console.log('API Response:', response); // Kiểm tra phản hồi API
-//     // this.products = response.products;
-    
-//     // if (response.totalPages !== undefined) {
-//     //     this.totalPages = response.totalPages;
-//     // } else {
-//     //     console.error('totalPages is undefined in API response');
-//     // }
-    
-//     // this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
-//         this.products = response.products;
-//         this.totalPages = response.totalPage;
-//         console.log('Current Page:', this.currentPage, 'Total Pages:', this.totalPages);
-// this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
-//         // this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
-//       },
-//       complete: () => {
-//         debugger;
-//       },
-//       error: (error: any) => {
-//         debugger;
-//         console.error('Error fetching products:', error);
-//       }
-//     });    
-//   }
+  onProductClick(productId: number) {
+    console.log('Clicked product ID:', productId);
+    this.router.navigate(['/products', productId]); // Điều hướng đến trang chi tiết sản phẩm
+  }
+  
 
-getProducts(keyword: string, selectedCategoryId: number, page: number, limit: number) {
-  debugger
-  this.productService.getProducts(keyword, selectedCategoryId, page, limit).subscribe({
-    next: (response: any) => {
-      debugger
-      response.products.forEach((product: Product) => {          
-        product.url = `${environment.apiBaseurl}/products/images/${product.thumbnail}`;
-      });
-      this.products = response.products;
-      this.totalPages = response.totalPage;
-      console.log('Current Page:', this.currentPage, 'Total Pages:', this.totalPages);
-this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
-      // this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
-    },
-    complete: () => {
-      debugger;
-    },
-    error: (error: any) => {
-      debugger;
-      console.error('Error fetching products:', error);
-    }
-  });    
-}
-  onPageChange(page: number) {
+  getProducts(keyword: string, selectedCategoryId: number, page: number, limit: number) {
     debugger;
-    this.currentPage = page;
+    this.productService.getProducts(keyword, selectedCategoryId, page, limit).subscribe({
+      next: (response: any) => {
+        debugger;
+        response.products.forEach((product: Product) => {
+          product.url = `${environment.apiBaseurl}/products/images/${product.thumbnail}`;
+        });
+        this.products = response.products;
+        this.totalPages = response.totalPage;
+  
+        // Tạo danh sách trang khả dụng để hiển thị
+        this.visiblePages = this.generateVisiblePageArray(this.currentPage, this.totalPages);
+      },
+      error: (error: any) => {
+        console.error('Error fetching products:', error);
+      }
+    });
+  }
+  
+  onPageChange(page: number) {
+    if (page < 0 || page >= this.totalPages) return; // Kiểm tra hợp lệ
+    this.currentPage = page; // Cập nhật trang hiện tại
     this.getProducts(this.keyword, this.selectedCategoryId, this.currentPage, this.itemsPerPage);
   }
-
   
   generateVisiblePageArray(currentPage: number, totalPages: number): number[] {
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 5; // Hiển thị tối đa 5 trang
     const halfVisiblePages = Math.floor(maxVisiblePages / 2);
-
-    let startPage = Math.max(currentPage - halfVisiblePages, 1);
-    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages);
-
+  
+    let startPage = Math.max(currentPage - halfVisiblePages, 0);
+    let endPage = Math.min(startPage + maxVisiblePages - 1, totalPages - 1);
+  
     if (endPage - startPage + 1 < maxVisiblePages) {
-      startPage = Math.max(endPage - maxVisiblePages + 1, 1);
+      startPage = Math.max(endPage - maxVisiblePages + 1, 0);
     }
-
-    return new Array(endPage - startPage + 1).fill(0).map((_, index) => startPage + index);
+  
+    return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
   }
-  // Hàm xử lý sự kiện khi sản phẩm được bấm vào
-  onProductClick(productId: number) {
-    debugger
-    // Điều hướng đến trang detail-product với productId là tham số
-    this.router.navigate(['/products', productId]);
-  }  
 }

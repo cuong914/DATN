@@ -3,57 +3,65 @@
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <div class="login-form mx-auto">
-                <h2 class="login-header">Đăng nhập</h2>
-                <div class="form-group">
-                    <label for="phoneNumber">Phone</label>
-                    <input type="text" class="form-control"
-                    ngModel="phoneNumber"
-                    (input)="onPhoneNumberChange()"
-                    name="phoneNumber"
-                    (focus)="loginForm.form.markAsTouched()">
-                    <div class="divider-nospace"></div>
-                    <p class="text-danger" 
-                    *ngIf="phoneNumber.length < 6 
-                    && loginForm.form.touched">Phone phải có ít nhất 6 ký tự</p>
-                </div>
-                <div class="mt-5"></div>
-                <div class="form-group password-field">
-                    <label for="password">Mật khẩu</label>
-                    <input type="password" placeholder="Ít nhất 3 ký tự" 
-                    ngModel="password"
-                        class="form-control" id="password">
-                    <i class="password-toggle fas fa-eye-slash"></i>
-                    <div class="divider-nospace"></div>
-                    <p class="text-danger" 
-                    *ngIf="password.length < 3 && loginForm.form.touched">
+                <h2 class="login-header text-center">Đăng nhập</h2>
+                
+                <form #loginForm="ngForm" novalidate>
+                    <div class="form-group">
+                        <label for="phoneNumber">Số điện thoại</label>
+                        <input type="text" class="form-control" 
+                               [(ngModel)]="phoneNumber"
+                               name="phoneNumber"
+                               required
+                               minlength="6"
+                               #phoneNumberField="ngModel">
+                        <div class="divider-nospace"></div>
+                        <p class="text-danger" 
+                           *ngIf="phoneNumberField.invalid && phoneNumberField.touched">
+                            Số điện thoại phải có ít nhất 6 ký tự
+                        </p>
+                    </div>
+
+                    <div class="form-group password-field mt-4">
+                        <label for="password">Mật khẩu</label>
+                        <input type="password" class="form-control" 
+                               placeholder="Ít nhất 3 ký tự" 
+                               [(ngModel)]="password"
+                               name="password"
+                               required
+                               minlength="3"
+                               #passwordField="ngModel">
+                        <div class="divider-nospace"></div>
+                        <p class="text-danger" 
+                           *ngIf="passwordField.invalid && passwordField.touched">
                             Mật khẩu phải có ít nhất 3 ký tự
                         </p>
-                </div>
-                <div class="form-group">
-                    <div class="form-check checkbox-text">
-                        <span style="display: flex;">
-                            <input type="checkbox" class="form-check-input" id="remember">
-                            <label class="form-check-label text-start" for="remember">
-                                Ghi nhớ đăng nhập</label>
-                        </span>
-                        <a href="#" class="register-link">Quên mật khẩu</a>
                     </div>
-                </div>
-                <div class="form-group">
-                    <select class="form-control access-right"
-                    [(ngModel)]="selectedRole">
-                        <option selected disabled>Quyền đăng nhập</option>
-                      <option *ngFor="let role of roles" [ngValue]="role">{{role.name}}</option>         
-                    </select>
-                  </div>
-                  <button type="button" 
-                  (click)="login()"
-                  class="login-button">Đăng nhập</button>
-                  <div class="divider"></div>
-                  <p class="text-center">Bạn chưa đăng ký? <span>
-                    <a href="#" class="register-link">Tạo tài khoản</a></span></p>
+
+                    <div class="form-group">
+                        <div class="form-check checkbox-text d-flex justify-content-between align-items-center">
+                            <div>
+                                <input type="checkbox" class="form-check-input" [(ngModel)]="rememberMe" name="remember">
+                                <label class="form-check-label" for="remember">
+                                    Ghi nhớ đăng nhập
+                                </label>
+                            </div>
+                            <a href="#" class="register-link">Quên mật khẩu?</a>
+                        </div>
+                    </div>
+
+                    <button type="button" 
+                            (click)="login()" 
+                            class="btn btn-primary btn-block mt-4">
+                        Đăng nhập
+                    </button>
+                </form>
+
+                <div class="divider mt-4"></div>
+                <p class="text-center">Bạn chưa có tài khoản? 
+                    <a (click)="createAccount()">Tạo tài khoản</a>
+                </p>
+            </div>
         </div>
     </div>   
 </div>
 <!-- <app-footer></app-footer> -->
-

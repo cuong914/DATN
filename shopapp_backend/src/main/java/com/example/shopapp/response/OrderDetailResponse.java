@@ -26,7 +26,7 @@ public class OrderDetailResponse {
     private Long productId;
 
 
-    private Float price;
+    private double price;
 
     @JsonProperty("number_of_products")
     private Integer numberOfProduct;

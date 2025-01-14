@@ -79,20 +79,41 @@ public class JwtTokenFilter extends OncePerRequestFilter { //// mỗi reques đ�
                 Pair.of(String.format("%s/roles",apiPrefix), "GET"),
 //                Pair.of(String.format("%s/orders",apiPrefix), "GET"),
                 Pair.of(String.format("%s/products", apiPrefix),"GET"),
+                Pair.of(String.format("%s/statistics/**", apiPrefix),"GET"),
+                Pair.of(String.format("%s/orders/pending", apiPrefix), "GET"), // Thêm dòng này
+                Pair.of(String.format("%s/orders/get-orders-by-keyword", apiPrefix), "GET"),
                 Pair.of(String.format("%s/orders/vnpay-payment/**", apiPrefix),"GET"),
-
+                Pair.of(String.format("%s/counter-orders/create", apiPrefix), "POST"),
                 Pair.of(String.format("%s/categories", apiPrefix), "GET"),
+                Pair.of(String.format("%s/order_details/cancel", apiPrefix), "PUT"),
                 Pair.of(String.format("%s/users/register", apiPrefix), "POST"),
                 Pair.of(String.format("%s/users/login", apiPrefix), "POST")
+
         );
 
         String requestPath = request.getServletPath();
         String requestMethod = request.getMethod();
 
+
+        for (Pair<String, String> bypassToken : bypassTokens) {
+            if (requestPath.contains(bypassToken.getFirst()) && requestMethod.equals(bypassToken.getSecond())) {
+                return true;
+            }
+        }
+
+        if (requestPath.startsWith(String.format("%s/statistics", apiPrefix))) {
+            return true;
+        }
+
         if (requestPath.contains("/orders/vnpay-payment") && requestMethod.equals("GET")) {
             // Allow access to /orders/vnpay-payment
             return true;
         }
+        if (requestPath.startsWith(String.format("%s/order_details", apiPrefix))
+                && requestMethod.equals("PUT")) {
+            return true;
+        }
+
 
 
         if (requestPath.equals(String.format("%s/orders/**", apiPrefix))

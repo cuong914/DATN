@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -39,7 +40,7 @@ public class OrderResponse {
 
     @JsonProperty("order_date")
     //@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", timezone = "UTC")
-    private LocalDate orderDate;
+    private LocalDateTime orderDate;
 
     @JsonProperty("status")
     private String status;

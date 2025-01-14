@@ -126,17 +126,6 @@ export class OrderComponent implements OnInit{
   placeOrder() {
     debugger
     if (this.orderForm.errors == null) {
-      // Gán giá trị từ form vào đối tượng orderData
-      /*
-      this.orderData.fullname = this.orderForm.get('fullname')!.value;
-      this.orderData.email = this.orderForm.get('email')!.value;
-      this.orderData.phone_number = this.orderForm.get('phone_number')!.value;
-      this.orderData.address = this.orderForm.get('address')!.value;
-      this.orderData.note = this.orderForm.get('note')!.value;
-      this.orderData.shipping_method = this.orderForm.get('shipping_method')!.value;
-      this.orderData.payment_method = this.orderForm.get('payment_method')!.value;
-      */
-      // Sử dụng toán tử spread (...) để sao chép giá trị từ form vào orderData
       this.orderData = {
         ...this.orderData,
         ...this.orderForm.value
@@ -204,11 +193,14 @@ export class OrderComponent implements OnInit{
   }
   
   increaseQuantity(index: number): void {
-    this.cartItems[index].quantity++;   
-    // Cập nhật lại this.cart từ this.cartItems
-    this.updateCartFromCartItems();
-    this.calculateTotal();
-  }    
+    const item = this.cartItems[index];
+    if (item.quantity < item.product.numberProduct) {
+      item.quantity++;
+    } else {
+      alert('Bạn không thể mua vượt quá số lượng sản phẩm có trong kho!');
+    }
+  }
+  
   
   // Hàm tính tổng tiền
   calculateTotal(): void {

@@ -27,7 +27,7 @@ public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "token", length = 255)
     private String token; // là 1 sâu ký tự dài

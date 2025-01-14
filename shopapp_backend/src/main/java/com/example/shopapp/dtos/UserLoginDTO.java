@@ -25,7 +25,7 @@ public class UserLoginDTO {
     @NotBlank(message = "pasword cannot be banl")
     private String password;
 
-    @Min(value = 1, message = "You must enter role's Id")
-    @JsonProperty("role_id")
-    private Long roleId;
+//    @Min(value = 1, message = "You must enter role's Id")
+//    @JsonProperty("role_id")
+//    private Long roleId;
 }

@@ -1,58 +1,50 @@
 .container {
-    color: white;
-    height: 100vh;    
+    color: rgb(0, 0, 0);
+    height: 100vh;
 }
-
 .register-form {
-    background-color: rgb(12, 12, 55);
-    border-radius: 10px;
-    padding: 20px;
     max-width: 500px;
-    border: 1px solid rgb(32, 34, 60);
-    align-items: center;
-    justify-content: center;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid rgb(0, 0, 0);
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .register-header {
     text-align: center;
-    /*      color: rgb(233, 66, 178);*/
-    color: rgb(105, 244, 181);
+    color: rgb(0, 0, 0);
     margin-bottom: 20px;
-
 }
-
-.label-text {
-    color: rgb(243, 165, 42);
-}
-
 .form-control {
     background-color: transparent;
     border: none;
-    color: white;
+    border-bottom: 1px solid rgb(0, 0, 0);
+    border-radius: 0;
+    color: rgb(0, 0, 0);
 }
-
 .form-control:focus {
-    color: white;
+    color: rgb(0, 0, 0);
     background-color: transparent;
     outline: none;
-    box-shadow: none;
-    border-color: transparent;
-    padding-left: 0;
+    border-color: transparent;    
+}
+  
+.divider-nospace {
+    border-top: 1px solid rgb(0, 0, 0);
 }
 
 .password-field {
     position: relative;
 }
-
 .password-toggle {
     position: absolute;
     top: 50%;
     right: 10px;
     transform: translateY(-50%);
-    color: rgb(105, 244, 181);
+    color: rgb(0, 0, 0);
     cursor: pointer;
 }
-
 .checkbox-text {
     color: rgb(243, 165, 42);
     display: flex;
@@ -60,11 +52,10 @@
     align-items: center;
     margin-top: 10px;
 }
-
 /* Màu checkbox khi được chọn */
 .checkbox-text input[type="checkbox"]:checked {
     border-color: white;
-    background-color: rgb(233, 66, 178);
+    background-color: rgb(0, 0, 0);
 }
 
 .form-check-input {
@@ -72,29 +63,18 @@
 }
 
 .register-link {
-    color: rgb(105, 244, 181);
+    color: rgb(0, 0, 0);
     text-decoration: none;
 }
-
-.register-button {
-    background: linear-gradient(to right, rgb(225, 64, 180), rgb(126, 43, 237));
-    color: white;
-    border-radius: 30px;
-    width: 100%;
-    padding: 10px 0;
+.access-right {
     margin-top: 20px;
-    border: none;
+    width: 200px;
+    color: rgb(0, 0, 0);
+    border: 1px solid rgb(0, 0, 0);
 }
 
-.divider {
-    height: 1px;
-    background-color: rgb(243, 165, 42);
-    /*      background-color: rgb(105, 244, 181)*/
-    margin: 20px;
-}
-
-.divider-nospace {
-    border-top: 1px solid white;
+.access-right:focus {
+    border: 1px solid rgb(225, 64, 180);
 }
 
 .form-control::placeholder {
@@ -113,3 +93,20 @@
     /* Microsoft Edge */
     color: rgba(243, 165, 42, 0.4);
 }
+
+.register-button {
+    background: linear-gradient(to right, #00baf8, #f4ee82);
+    color: white;
+    border-radius: 30px;
+    width: 100%;
+    padding: 10px 0;
+    margin-top: 20px;
+    border: none;
+}
+
+.divider {
+    height: 1px;
+    background-color: rgb(243, 165, 42);
+    margin: 20px 0;
+}
+

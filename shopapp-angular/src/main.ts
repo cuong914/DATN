@@ -31,6 +31,9 @@ import { UpdateProductAdminComponent } from './app/components/admin/product/upda
 import { InsertCategoryAdminComponent } from './app/components/admin/category/insert-category/insert.category.admin.component';
 import { UpdateCategoryAdminComponent } from './app/components/admin/category/update-category/update.category.admin.component';
 import { StatisticalAdminComponent } from './app/components/admin/statistical/statistical.admin.component';
+import { SizeAdminComponent } from './app/components/admin/size/size.admin.component';
+import { InsertSizeAdminComponent } from './app/components/admin/size/insert-size/insert.size.admin.component';
+import { UpdateSizeAdminComponent } from './app/components/admin/size/update-size/update.size.admin.component';
 
  // if(environment.product){
 //     enableProdMode();
@@ -58,6 +61,9 @@ const routes: Routes = [
       { path: 'orders/:id', component: DetailOrderAdminComponent },
       { path: 'products', component: ProductAdminComponent },
       { path: 'categories', component: CategoryAdminComponent },
+      { path: 'sizes', component: SizeAdminComponent },
+      { path: 'sizes/insert', component: InsertSizeAdminComponent },
+      { path: 'sizes/update/:id', component: UpdateSizeAdminComponent },
       { path: 'categories/insert', component: InsertCategoryAdminComponent },
       { path: 'categories/update/:id', component: UpdateCategoryAdminComponent },
       { path: 'products/insert', component: InsertProductAdminComponent },

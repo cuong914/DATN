@@ -18,16 +18,16 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   getProducts(keyword:string, categoryId:number, 
-              page: number, limit: number
-    ): Observable<ApiResponse> {
-      debugger
-    const params = new HttpParams()
-      .set('keyword', keyword)
-      .set('category_id', categoryId)
-      .set('page', page.toString())
-      .set('limit', limit.toString());            
-    return this.http.get<ApiResponse>(this.apiGetProducts, { params });
-  }
+    page: number, limit: number
+): Observable<ApiResponse> {
+debugger
+const params = new HttpParams()
+.set('keyword', keyword)
+.set('category_id', categoryId)
+.set('page', page.toString())
+.set('limit', limit.toString());            
+return this.http.get<ApiResponse>(this.apiGetProducts, { params });
+}
 
   getDetailProductsssss(productId: number): Observable<ApiResponse> {
     debugger
@@ -56,6 +56,15 @@ export class ProductService {
     debugger
   return this.http.delete<ApiResponse>(`${this.apiBaseUrl}/products/${productId}`,{headers});
   }
+  createOrderAtCounter(orderRequest: any) {
+    const token = localStorage.getItem('access_token');
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
+    });
+  
+    return this.http.post(`${environment.apiBaseurl}/orders/create-order-counter`, orderRequest, { headers });
+  }  
   updateProduct(productId: number, updatedProduct: UpdateProductDTO): Observable<ApiResponse> {
     const token = localStorage.getItem('access_token'); // Hoặc dùng TokenService nếu bạn đang sử dụng
     const headers = new HttpHeaders({
@@ -85,7 +94,10 @@ export class ProductService {
     return this.http.post<ApiResponse>(`${this.apiBaseUrl}/products/uploads/${productId}`, formData,{headers});
   }
   deleteProductImage(id: number): Observable<any> {
-    debugger
-    return this.http.delete<string>(`${this.apiBaseUrl}/product_images/${id}`);
-  }
+    const token = localStorage.getItem('access_token');  // Lấy token từ localStorage hoặc TokenService
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+    return this.http.delete<string>(`${this.apiBaseUrl}/products/deleted/images/${id}`, { headers });
+  }  
 }

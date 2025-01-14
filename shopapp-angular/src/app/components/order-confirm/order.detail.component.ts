@@ -15,7 +15,7 @@ import { OrderDetail } from '../../models/order.detail';
   standalone: true,
   imports: [HeaderComponent,FooterComponent,NgFor,NgClass,FormsModule,CommonModule],
   templateUrl: './order.detail.component.html',
-  styleUrl: './order.detail.component.scss'
+  styleUrls: ['./order.detail.component.scss']
 })
 export class OrderDetailComponent implements OnInit {
   orderResponse: OrderResponse = {

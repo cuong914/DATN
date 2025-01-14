@@ -8,7 +8,7 @@ import com.example.shopapp.models.User;
 public interface IUserService {
     User create(UserDTO userDTO) throws Exception; // tạo user mới khi đang ký
 
-    String login(String phoneNumber, String password, Long roleId) throws Exception;// để string vì nó trả về 1 token key chuỗi ký tự mã joas
+     String login(String phoneNumber, String password) throws Exception;// để string vì nó trả về 1 token key chuỗi ký tự mã joas
 
     User getUserDetailsFromToken(String token) throws Exception;
     User updateUser(Long userId, UpdateUserDTO updatedUserDTO) throws Exception;

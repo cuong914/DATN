@@ -19,19 +19,25 @@ import { AppComponent } from './app/app.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { RouterModule } from '@angular/router';
 import { OrderAdminComponent } from './components/admin/order/order.admin.component';
+
 import { ToastrModule } from 'ngx-toastr';
+import { NgChartsModule } from 'ng2-charts';
+
+
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // import { AppRoutingModule } from './router.module';
 // import { AdminModule } from './components/admin/admin.moudles';
 
+
+
 @NgModule( {
     declarations : [
-        
         // HomeComponent,
         
    
     ],
     imports: [
+        
         OrderAdminComponent,
         RouterModule,
         BrowserModule,
@@ -45,6 +51,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         RegisterComponent,
         
         FormsModule,
+        NgChartsModule,  // Thêm vào đây
         NgIf,
         CommonModule,
         ReactiveFormsModule,

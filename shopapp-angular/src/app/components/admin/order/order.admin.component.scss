@@ -1,25 +1,83 @@
 @import '../../../styles/shared-style.scss';
 
-.page-number {
-    cursor: pointer;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    margin: 0 2px;
-    border-radius: 3px;
-}
-
-.page-number.active {
-    background-color: $shopapp-color !important;
-    color: #fff;
-    border-color: $shopapp-color !important;
-}
-
-.btn.btn-primary {
-    margin-left: 10px;
-}
 .container-fluid {
     background-color: white;
-    padding-left: 0 !important; /* Remove left padding */
-    padding-right: 0 !important; /* Remove right padding */
-    height: 100vh;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Định dạng bảng */
+.table {
+    width: 100%;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    white-space: nowrap;
+    text-align: center;
+    padding: 10px 12px;
+    min-width: 90px;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+/* Badge trạng thái */
+.badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+}
+
+/* Phân trang */
+.pagination {
+    margin: 20px 0;
+}
+
+.pagination .page-item .page-link {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: #007bff;
+    margin: 0 3px;
+    text-decoration: none;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-link {
+    cursor: pointer;
+}
+
+.pagination .page-item.disabled .page-link {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Làm cho cả hàng có thể click */
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover {
+    background-color: #e9f7fe;
 }

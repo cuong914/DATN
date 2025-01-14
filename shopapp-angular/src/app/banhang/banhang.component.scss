@@ -1,85 +1,74 @@
-.bordered-table {
-    width: 100%;
-    border-collapse: collapse; /* Để viền không bị đúp */
-  }
-  
-  .bordered-table, .bordered-table th, .bordered-table td {
-    border: 2px solid #000; /* Màu viền đen */
-    padding: 8px;
-  }
-  
-  .bordered-table th {
-    background-color: #f2f2f2; /* Màu nền cho tiêu đề bảng */
+.container {
+  margin-top: 20px;
+  .card {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .product-list-container {
-    height: 300px;
-    overflow-y: scroll;
-    border: 1px solid #ccc;
-    padding: 10px;
-  }
-  
-  .bordered-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .bordered-table th, .bordered-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-  }
-  
-  .bordered-table th {
-    background-color: #f2f2f2;
-    text-align: left;
-  }
-  
-  /* Chỉnh kích thước cột giá */
-  .price-column {
-    width: 50px; /* Bạn có thể điều chỉnh kích thước tùy theo nhu cầu */
-    text-align: right; /* Căn phải giá để hiển thị đẹp hơn */
-  }
-  
+  .table {
+    th,
+    td {
+      vertical-align: middle;
+    }
 
-  .cart-container {
-    margin: 20px;
-    
-    button {
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-  
-    .cart-input {
-      margin-top: 10px;
-  
-      input {
-        padding: 10px;
-        margin-right: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-      }
-    }
-    
-    .cart-input button {
-      background-color: #28a745;
-    }
-  
-    p {
-      margin-top: 10px;
+    thead th {
+      background-color: #f8f9fa;
       font-weight: bold;
     }
-    .container {
-      display: flex;
-      justify-content: space-between; // Tạo khoảng cách giữa các khối
-      align-items: flex-start; // Căn các phần tử theo chiều dọc
-    
-      .block, .paypay {
-        width: 48%; // Chia chiều rộng để cả hai khối hiển thị cùng hàng
-      }
+
+    tbody tr:hover {
+      background-color: #f1f1f1;
     }
-    
+
+    .btn {
+      font-size: 0.875rem;
+    }
   }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  h1, h2 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+  }
+}
+.order-details input {
+  max-width: 200px;
+}
+.text-danger {
+  color: #dc3545 !important;
+}
+.text-success {
+  color: #28a745 !important;
+}
+.btn-block {
+  width: 100%;
+}
+.product-row {
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.product-row:hover {
+  background-color: #f1f1f1;
+}
+
+.table-active {
+  background-color: #d3e0ff !important;
+}
+.product-scroll {
+  max-height: 400px;  // Đặt chiều cao tối đa cho bảng sản phẩm
+  overflow-y: auto;  // Bật cuộn dọc khi nội dung vượt quá
+  border: 1px solid #ddd;
+
+  // Làm cho header bảng luôn cố định khi cuộn
+  .sticky-header {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    z-index: 10;
+  }
+}

@@ -22,7 +22,23 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
             "o.fullName LIKE %:keyword% " +
             "OR o.address LIKE %:keyword% " +
             "OR o.note LIKE %:keyword% " +
-            "OR o.email LIKE %:keyword%)")
+            "OR o.email LIKE %:keyword%) " +
+            "ORDER BY o.orderDate DESC")  // Sắp xếp theo ngày đặt giảm dần
     Page<Order> findByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+
+    @Query("SELECT SUM(o.totalMoney) FROM Order o WHERE o.status = 'delivered'")
+    Long calculateTotalRevenue();
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'delivered'")
+    Long countDeliveredOrders();
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'pending'")
+    Long countPendingOrders();
+
+    @Query("SELECT COUNT(o) FROM Order o WHERE o.status = 'cancelled'")
+    Long countCancelledOrders();
+
+    List<Order> findByStatus(String status); // Thêm phương thức này
 
 }

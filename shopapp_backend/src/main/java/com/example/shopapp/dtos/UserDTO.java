@@ -43,8 +43,9 @@ public class UserDTO {
     @JsonProperty("google_account_id")
     private int googleAccountId;
 
+    @JsonProperty("is_active")
+    private boolean active = true ;
 
     @JsonProperty("role_id")
-    @NotNull(message = "role id is required")// để check xem tk đó có vai trò gì
-    private long roleId;
+    private Long roleId = 1L;
 }

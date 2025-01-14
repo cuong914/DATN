@@ -9,11 +9,11 @@ import { Type } from 'class-transformer';
 import { CartItemDTO } from './cart_item_dto';
 
 export class OrderDTO {
-  user_id: number;
+  user_id?: number;
 
   fullname: string;
 
-  email: string;
+  email?: string;
 
   phone_number: string;
   

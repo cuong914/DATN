@@ -1,5 +1,5 @@
 .intro-section {
-    color: white;
+    color: rgb(0, 0, 0);
     padding: 20px;
     text-align: center;
 }
@@ -35,10 +35,10 @@
 }
 
 .thumbnail-item.active {
-    border: 2px solid white;
+    border: 2px solid rgb(0, 0, 0);
 }
 .product-details {
-    color: white;
+    color: rgb(0, 0, 0);
     padding: 20px;
 }
 
@@ -52,7 +52,7 @@
     margin-right: 10px;
 }
 .border-wrapper {
-    border: 1px solid white;      
+    border: 1px solid rgb(0, 0, 0);      
   }
 
   .product-quantity {
@@ -65,14 +65,14 @@
   .product-quantity button {
       background-color: transparent;
       border: none;
-      color: white;
+      color: rgb(0, 0, 0);
       font-size: 16px;
       cursor: pointer;
   }
   .product-quantity input {
     background-color: transparent;
     border: none;
-    color: white;
+    color: rgb(0, 0, 0);
     font-size: 16px;
     text-align: center;
     width: 40px;

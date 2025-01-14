@@ -27,3 +27,33 @@
 .rounded-square {
     border-radius: 10px;
 }
+.table th, .table td {
+    vertical-align: middle;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.pagination .page-item .page-link {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+.pagination .page-item .page-link:hover {
+    background-color: #e9ecef;
+}
+.clickable-row {
+    cursor: pointer;
+  }
+  
+  .clickable-row:hover {
+    background-color: #f8f9fa;  /* Đổi màu khi hover */
+  }
+  

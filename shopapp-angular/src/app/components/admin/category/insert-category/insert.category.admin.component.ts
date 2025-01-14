@@ -7,6 +7,8 @@ import { Category } from "../../../../models/category";
 import { CategoryService } from "../../../../service/category.service";
 import { ProductService } from "../../../../service/product.service";
 import { HttpErrorResponse } from "@angular/common/http";
+import Swal from 'sweetalert2';
+
 
 @Component({
     selector: 'app-insert.category.admin',
@@ -38,13 +40,24 @@ import { HttpErrorResponse } from "@angular/common/http";
     insertCategory() {    
       this.categoryService.insertCategory(this.insertCategoryDTO).subscribe({
         next: (response) => {
-          debugger
-          this.router.navigate(['/admin/categories']);        
+          Swal.fire({
+            title: 'Thành công!',
+            text: 'Danh mục mới đã được thêm.',
+            icon: 'success',
+            timer: 1500,
+            showConfirmButton: false
+          }).then(() => {
+            this.router.navigate(['/admin/categories']);        
+          });
         },
         error: (error: HttpErrorResponse) => {
-          debugger;
-          console.error(error?.error?.message ?? '');
+          Swal.fire({
+            title: 'Thêm thất bại!',
+            text: error?.error?.message || 'Đã có lỗi xảy ra khi thêm danh mục.',
+            icon: 'error',
+            confirmButtonText: 'Thử lại'
+          });
         }        
       });    
-    }
+    }    
   }

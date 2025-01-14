@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { OrderRequest } from '../models/order-request';
 
 @Injectable({
   providedIn: 'root'
@@ -8,6 +9,9 @@ export class CartService {
   private cart: Map<number, number> = new Map<number, number>(); // Dùng Map để lưu trữ giỏ hàng, key là id sản phẩm, value là số lượng
   private cartItemCountSubject: BehaviorSubject<number> = new BehaviorSubject<number>(0); // BehaviorSubject để thông báo số lượng sản phẩm giỏ hàng
 
+  private totalMoney: number = 0;
+  private amountGiven: number = 0;
+  private change: number = 0;
   constructor() {
     this.refreshCart();
   }
@@ -54,6 +58,37 @@ export class CartService {
     this.saveCartToLocalStorage();
     this.updateCartItemCount(); // Cập nhật số lượng sau khi thay đổi giỏ hàng
   }
+  // Tính tổng tiền dựa trên giỏ hàng và giá sản phẩm
+  calculateTotalMoney(productPrices: { [productId: number]: number }): number {
+    let total = 0;
+    this.cart.forEach((quantity, productId) => {
+      if (productPrices[productId]) {
+        total += productPrices[productId] * quantity;
+      }
+    });
+    this.totalMoney = total;
+    return total;
+  }
+    // Cập nhật số tiền khách đưa
+    updateAmountGiven(amount: number): void {
+      this.amountGiven = amount;
+      this.calculateChange();
+    }
+  
+    // Tính tiền thừa
+    private calculateChange(): void {
+      this.change = this.amountGiven - this.totalMoney;
+    }
+  
+    // Lấy tổng tiền
+    getTotalMoney(): number {
+      return this.totalMoney;
+    }
+  
+    // Lấy tiền thừa
+    getChange(): number {
+      return this.change;
+    }
 
   // Lấy giỏ hàng
   getCart(): Map<number, number> {
@@ -88,8 +123,11 @@ export class CartService {
   // Xóa giỏ hàng
   clearCart(): void {
     this.cart.clear();
+    this.totalMoney = 0;
+    this.amountGiven = 0;
+    this.change = 0;
     this.saveCartToLocalStorage();
-    this.updateCartItemCount(); // Cập nhật lại số lượng sau khi xóa giỏ hàng
+    this.updateCartItemCount();
   }
 
   // Cập nhật lại giỏ hàng từ Map

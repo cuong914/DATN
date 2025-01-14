@@ -7,6 +7,9 @@ import { CartService } from '../../service/cart.service';
 import { CommonModule } from '@angular/common';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { OrderService } from '../../service/order.service';
+import { OrderResponse } from '../../responses/order/order.response';
 
 @Component({
   selector: 'app-header',
@@ -26,10 +29,13 @@ export class HeaderComponent implements OnInit {
     private userService: UserService,
     private tokenService: TokenService,
     private router: Router,
-    private cartService: CartService  // Khởi tạo CartService
+    private cartService: CartService , // Khởi tạo CartService
+    private route: ActivatedRoute, 
+    private orderService: OrderService
   ) { }
 
   ngOnInit() {
+
     // Lấy thông tin người dùng từ localStorage
     this.userResponse = this.userService.getUserResponseFromLocalStorage();
     
@@ -53,17 +59,21 @@ export class HeaderComponent implements OnInit {
   goToHome() {
     this.router.navigate(['/']);
   }
+  goToOrder() {
+    this.router.navigate(['/']);
+  }
 
   // Hàm để toggle popover
   togglePopover(event: Event): void {
     event.preventDefault();
     this.isPopoverOpen = !this.isPopoverOpen;
   }
-
   // Hàm xử lý khi người dùng click vào menu trong popover
   handleItemClick(index: number): void {
     if (index === 0) {
       this.router.navigate(['/user-profile']);
+    } else if (index === 1) {
+      this.router.navigate([`/order-detail`]); // Điều hướng tới OrderDetailComponent
     } else if (index === 2) { // Đăng xuất
       this.userService.removeUserFromLocalStorage();
       this.tokenService.removeToken();
@@ -72,7 +82,7 @@ export class HeaderComponent implements OnInit {
     }
     this.isPopoverOpen = false; // Đóng popover sau khi chọn item
   }
-
+  
   setActiveNavItem(index: number) {
     this.activeNaviItem = index;
   }

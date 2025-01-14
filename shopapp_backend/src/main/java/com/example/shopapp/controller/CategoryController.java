@@ -44,6 +44,24 @@ public class CategoryController {
     private final MessageSource messageSource;
     private final LocallizationUtils locallizationUtils;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseObject> getCategoryById(@PathVariable Long id) {
+        try {
+            Category category = categoryService.getCategoryById(id);
+            return ResponseEntity.ok(
+                    ResponseObject.builder()
+                            .status(HttpStatus.OK)
+                            .data(category)
+                            .message("Lấy thông tin danh mục thành công")
+                            .build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ResponseObject.builder()
+                            .status(HttpStatus.NOT_FOUND)
+                            .message("Không tìm thấy danh mục với id: " + id)
+                            .build());
+        }
+    }
     @PostMapping("")
     // mếu tham số truyền vào là 1 đối tượng (object) => gọi là transfer object = request object
     // ResponseEntity<?> nếu kiểu dữ liệu trả về là cả list và string thì đặt là ? k thì để nguyên là string

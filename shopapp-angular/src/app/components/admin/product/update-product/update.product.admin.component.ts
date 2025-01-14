@@ -11,6 +11,9 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { ProductImage } from "../../../../models/product.image";
 import { environment } from "../../../../environments/environments";
 import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
+import Swal from 'sweetalert2';
+import { Size } from "../../../../models/size";
+import { SizeService } from "../../../../service/size.service";
 
 @Component({
     selector: 'app-detail.product.admin',
@@ -27,7 +30,9 @@ import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
     productId: number;
     product: Product;
     updatedProduct: Product;
-    categories: Category[] = []; // Dữ liệu động từ categoryService
+    categories: Category[] = [];
+   sizes: Size[] = [];
+    // Dữ liệu động từ categoryService
     currentImageIndex: number = 0;
     images: File[] = [];
   
@@ -35,7 +40,8 @@ import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
       private productService: ProductService,
       private route: ActivatedRoute,
       private router: Router,
-      private categoryService: CategoryService,    
+      private categoryService: CategoryService,   
+      private sizeService : SizeService, 
     //   private location: Location,
     ) {
       this.productId = 0;
@@ -49,28 +55,8 @@ import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
         this.getProductDetails();
       });
       this.getCategories(1, 100);
+      this.getSizes(1,100);
     }
-    // getCategories(page: number, limit: number) {
-    //   this.categoryService.getCategories(page, limit).subscribe({
-    //     next: (apiResponse: ApiResponse) => {
-    //       debugger;
-    //       this.categories = apiResponse.data;
-    //     },
-    //     complete: () => {
-    //       debugger;
-    //     },
-    //     error: (error: HttpErrorResponse) => {
-    //       debugger;
-    //       console.error(error?.error?.message ?? '');
-    //     } 
-    //   });
-    // }
-
-    // Hàm thay đổi trạng thái active
-  // toggleActive() {
-  //   this.product.active = !this.product.active;  // Chuyển trạng thái giữa true và false
-  // }
-
     getCategories(page: number, limit: number) {
       this.categoryService.getCategories(page, limit).subscribe({
         next: (categories: Category[]) => {
@@ -86,34 +72,20 @@ import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
       });
     }
 
-    
-  //   if (!isNaN(this.productId)) {
-  //     this.productService.getDetailProduct(this.productId).subscribe({
-  //       next: (response: any) => {            
-  //         // Lấy danh sách ảnh sản phẩm và thay đổi URL
-  //         debugger
-  //         if (response.product_images && response.product_images.length > 0) {
-  //           response.product_images.forEach((product_image:ProductImage) => {
-  //             product_image.image_url = `${environment.apiBaseurl}/products/images/${product_image.image_url}`;
-  //           });
-  //         }            
-  //         debugger
-  //         this.product = response 
-  //         // Bắt đầu với ảnh đầu tiên
-  //         this.showImage(0);
-  //       },
-  //       complete: () => {
-  //         debugger;
-  //       },
-  //       error: (error: any) => {
-  //         debugger;
-  //         console.error('Error fetching detail:', error);
-  //       }
-  //     });    
-  //   } else {
-  //     console.error('Invalid productId:', idParam);
-  //   }      
-  // }
+    getSizes(page: number, limit: number) {
+      this.sizeService.getSizes(page, limit).subscribe({
+        next: (sizes: Size[]) => {
+          debugger
+          this.sizes = sizes;
+        },
+        complete: () => {
+          debugger;
+        },
+        error: (error: any) => {
+          console.error('Error fetching size:', error);
+        }
+      });
+    }
 
     getProductDetails(): void {
       debugger
@@ -137,29 +109,40 @@ import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
       });     
     }
     updateProduct() {
-      // Implement your update logic here
       const updateProductDTO: UpdateProductDTO = {
         name: this.updatedProduct.name,
         price: this.updatedProduct.price,
         active: this.updatedProduct.active,
         numberProduct: this.updatedProduct.numberProduct,
         description: this.updatedProduct.description,
+        size_id : this.updatedProduct.size_id,
+        color : this.updatedProduct.color,
         category_id: this.updatedProduct.category_id
       };
+    
       this.productService.updateProduct(this.product.id, updateProductDTO).subscribe({
-        next: (apiResponse: ApiResponse) => {  
-          debugger        
-        },
-        complete: () => {
-          debugger;
-          this.router.navigate(['/admin/products']);        
+        next: () => {
+          Swal.fire({
+            position: 'center',
+            icon: 'success',
+            title: 'Cập nhật sản phẩm thành công!',
+            showConfirmButton: false,
+            timer: 1500
+          }).then(() => {
+            this.router.navigate(['/admin/products']);
+          });
         },
         error: (error: HttpErrorResponse) => {
-          debugger;
+          Swal.fire({
+            icon: 'error',
+            title: 'Cập nhật thất bại!',
+            text: 'Đã có lỗi xảy ra khi cập nhật sản phẩm.',
+            confirmButtonText: 'Thử lại'
+          });
           console.error(error?.error?.message ?? '');
-        } 
-      });  
-    }
+        }
+      });
+    }    
     showImage(index: number): void {
       debugger
       if (this.product && this.product.product_images && 
@@ -189,42 +172,75 @@ import { UpdateProductDTO } from "../../../../dtos/update.product.dto";
       this.showImage(this.currentImageIndex - 1);
     }  
     onFileChange(event: any) {
-      // Retrieve selected files from input element
       const files = event.target.files;
-      // Limit the number of selected files to 5
+    
       if (files.length > 5) {
-        console.error('Please select a maximum of 5 images.');
+        Swal.fire({
+          icon: 'warning',
+          title: 'Quá nhiều ảnh!',
+          text: 'Vui lòng chọn tối đa 5 ảnh.',
+          confirmButtonText: 'OK'
+        });
         return;
       }
-      // Store the selected files in the newProduct object
+    
       this.images = files;
+    
       this.productService.uploadImages(this.productId, this.images).subscribe({
-        next: (apiResponse: ApiResponse) => {
-          debugger
-          // Handle the uploaded images response if needed              
-          console.log('Images uploaded successfully:', apiResponse);
-          this.images = [];       
-          // Reload product details to reflect the new images
-          this.getProductDetails(); 
+        next: () => {
+          Swal.fire({
+            icon: 'success',
+            title: 'Tải ảnh lên thành công!',
+            showConfirmButton: false,
+            timer: 1500
+          });
+          this.getProductDetails();  // Tải lại chi tiết sản phẩm
+          this.images = [];
         },
         error: (error: HttpErrorResponse) => {
-          debugger;
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi tải ảnh!',
+            text: 'Không thể tải ảnh lên. Vui lòng thử lại.',
+            confirmButtonText: 'OK'
+          });
           console.error(error?.error?.message ?? '');
-        } 
-      })
+        }
+      });
     }
+    
     deleteImage(productImage: ProductImage) {
-      if (confirm('Are you sure you want to remove this image?')) {
-        // Call the removeImage() method to remove the image   
-        this.productService.deleteProductImage(productImage.id).subscribe({
-          next:(productImage: ProductImage) => {
-            location.reload();          
-          },        
-          error: (error: HttpErrorResponse) => {
-            debugger;
-            console.error(error?.error?.message ?? '');
-          } 
-        });
-      }   
-    }
+      Swal.fire({
+        title: 'Bạn có chắc chắn muốn xóa ảnh này?',
+        text: 'Hành động này không thể hoàn tác!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Xóa',
+        cancelButtonText: 'Hủy'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.productService.deleteProductImage(productImage.id).subscribe({
+            next: () => {
+              Swal.fire(
+                'Đã Xóa!',
+                'Ảnh đã được xóa thành công.',
+                'success'
+              );
+              // Tải lại chi tiết sản phẩm để cập nhật danh sách ảnh
+              this.getProductDetails();
+            },
+            error: (error: HttpErrorResponse) => {
+              Swal.fire(
+                'Lỗi!',
+                'Không thể xóa ảnh. Vui lòng thử lại.',
+                'error'
+              );
+              console.error(error?.error?.message ?? '');
+            }
+          });
+        }
+      });
+    }    
   }

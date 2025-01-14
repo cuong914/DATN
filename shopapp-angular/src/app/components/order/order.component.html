@@ -2,7 +2,6 @@
 <div class="container">
     <div class="intro-section">
         <h1>Đây là trang Order</h1>
-        <p>Sử dụng Bootstrap</p>
     </div> 
     <form [formGroup]="orderForm"> <!-- Thêm form và gán formGroup -->   
     <div class="row">
@@ -122,17 +121,6 @@
         </table>   
             <div class="text-start mt-3">
                 <h4 class="header-text text-end ">Tổng giá: {{ totalAmount | number: '1.0-0'}} VND</h4>
-            </div>
-            <div class="mt-3">
-                <h4 class="product-header">Nhập coupon</h4>
-                <div class="input-group">
-                    <input type="text" class="form-control" 
-                        formControlName="couponCode" 
-                        placeholder="Nhập coupon">
-                    <button 
-                        (click)="applyCoupon()"
-                        class="btn btn-gradient" type="button">Áp dụng</button>
-                </div>
             </div>    
             @if(couponDiscount > 0) {
                 <div class="text-start mt-3">

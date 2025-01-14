@@ -23,7 +23,7 @@ public class SocialAccount {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private long id;
+    private Long id;
 
     @Column(name = "provider", nullable = false, length = 20)
     private String provider;

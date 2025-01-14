@@ -1,0 +1,24 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../environments/environments';
+import { Observable } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class StatisticsService {
+  private apiBaseUrl = `${environment.apiBaseurl}/statistics`;
+
+  constructor(private http: HttpClient) { }
+
+  // Gọi API thống kê đơn hàng
+  getOrderStatistics(): Observable<any> {
+    
+    return this.http.get(`${this.apiBaseUrl}/orders`);
+  }
+
+  // Gọi API thống kê sản phẩm bán chạy
+  getTopSellingProducts(): Observable<any> {
+    return this.http.get(`${this.apiBaseUrl}/top-products`);
+  }
+}

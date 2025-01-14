@@ -1,6 +1,8 @@
-import { Component } from "@angular/core";
+import { Component ,OnInit  } from "@angular/core";
 import { ChartData, ChartOptions } from "chart.js";
+import { StatisticsService } from '../../../service/statistics.service';
 import { NgChartsModule } from "ng2-charts";
+import { CommonModule } from '@angular/common';
 // import { NgChartsModule, ChartsModule } from 'ng2-charts';
 
 
@@ -11,100 +13,64 @@ import { NgChartsModule } from "ng2-charts";
       './statistical.admin.component.scss',        
     ],
     standalone: true,
-    imports: [NgChartsModule],
+    imports: [NgChartsModule,CommonModule],
   })
 
-export class StatisticalAdminComponent{
- // Dữ liệu cho biểu đồ
-//  public salesData: ChartData<'bar'> = {
-//     labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6'],
-//     datasets: [
-//       {
-//         label: 'Doanh số (Triệu VND)',
-//         data: [50, 100, 75, 200, 150, 300], // Thay bằng dữ liệu từ API
-//         backgroundColor: 'rgba(54, 162, 235, 0.2)',
-//         borderColor: 'rgba(54, 162, 235, 1)',
-//         borderWidth: 1
-//       }
-//     ]
-//   };
+export class StatisticalAdminComponent implements OnInit {
+    public deliveredOrders: number = 0;
+    public pendingOrders: number = 0;
+    public cancelledOrders: number = 0;
+    public totalRevenue: number = 0;
+    public topProduct: string = 'Chưa có';
 
-//   // Cấu hình biểu đồ
-//   public chartOptions: ChartOptions<'bar'> = {
-//     responsive: true,
-//     plugins: {
-//       legend: {
-//         position: 'top',
-//       },
-//       tooltip: {
-//         callbacks: {
-//           label: (context) => `${context.raw} Triệu VND`
-//         }
-//       }
-//     },
-//     scales: {
-//       x: {
-//         beginAtZero: true
-//       },
-//       y: {
-//         beginAtZero: true
-//       }
-//     }
-//   };
+    public topProductsData: ChartData<'bar'>;
+    public productDetails: any[] = [];
 
-//   constructor() { }
+    public chartOptions: ChartOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
+        }
+    };
 
-//   ngOnInit(): void {
-//     // Gọi API để lấy dữ liệu (nếu cần)
-//     // this.loadSalesData();
-//   }
-
-//   Hàm ví dụ để tải dữ liệu từ API
-//   private loadSalesData(): void {
-//     this.salesService.getSalesData().subscribe(data => {
-//       this.salesData.datasets[0].data = data.sales;
-//       this.salesData.labels = data.months;
-//     });
-  // }
-
-  // Dữ liệu cho biểu đồ
-//   public lineChartData = [
-//     { data: [10, 20, 30, 40, 50], label: 'Doanh số bán hàng' }
-//   ];
-
-//   // Nhãn cho trục X
-//   public lineChartLabels = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5'];
-
-//   // Tùy chọn biểu đồ
-//   public lineChartOptions = {
-//     responsive: true,
-//   };
-
-//   public lineChartLegend = true;  // Hiển thị chú thích
-//   public lineChartType = 'line' as const; // Loại biểu đồ
-
-
-
-public chartData: ChartData<'pie'> = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-    datasets: [
-      {
-        data: [65, 59, 80, 81, 56],
-        label: 'Sales Data',
-        backgroundColor: '#42A5F5',
-      }
-    ]
-  };
-
-  public chartOptions: ChartOptions = {
-    responsive: true,
-    scales: {
-      x: { beginAtZero: true },
-      y: { beginAtZero: true }
+    constructor(private statisticsService: StatisticsService) {
+        this.topProductsData = { labels: [], datasets: [] };
     }
-  };
 
-  public chartType: 'bar' | 'line' | 'pie' = 'bar';  // Định nghĩa loại biểu đồ
+    ngOnInit() {
+        this.loadOrderStatistics();
+        this.loadTopSellingProducts();
+    }
 
+    // Load thống kê đơn hàng
+    loadOrderStatistics() {
+        this.statisticsService.getOrderStatistics().subscribe(data => {
+            this.deliveredOrders = data.deliveredOrders;
+            this.pendingOrders = data.pendingOrders;
+            this.cancelledOrders = data.cancelledOrders;
+            this.totalRevenue = data.totalRevenue;
+        });
+    }
 
+    // Load sản phẩm bán chạy
+    loadTopSellingProducts() {
+      this.statisticsService.getTopSellingProducts().subscribe(data => {
+          // Chỉ lấy top 6 sản phẩm đầu tiên
+          const top6Products = data.slice(0, 6);
+  
+          this.topProductsData = {
+              labels: top6Products.map((item: { productName: string }) => item.productName),
+              datasets: [{
+                  label: 'Số lượng đã bán',
+                  data: top6Products.map((item: { totalSold: number }) => item.totalSold),
+                  backgroundColor: '#4CAF50'
+              }]
+          };
+  
+          this.productDetails = top6Products;
+      });
+  }
+  
 }

@@ -1,40 +1,41 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-4">Danh Mục</h1>
 
-<div class="container">
-    <h1>Danh Mục</h1>        
-    <div class="row">
-      <div class="col-md-8 ">
-        <button class="btn btn-success" (click)="insertCategory()">Thêm danh mục mới</button>
-      </div>      
+  <div class="row mb-3">
+    <div class="col-md-8">
+      <button class="btn btn-success shadow" (click)="insertCategory()">
+        <i class="fas fa-plus"></i> Thêm danh mục mới
+      </button>
     </div>
-    <table class="table">
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-bordered text-center">
       <thead class="table-light">
         <tr>
-          <th>ID</th>
-          <th>Tên </th>          
+          <th>STT</th>
+          <th>Tên Danh Mục</th>
           <th>Hành Động</th>
         </tr>
       </thead>
-      <tbody>        
-        @for(category of categories; track category.id){
-          <tr>
-            <td>{{ category.id }}</td>
-            <td>{{ category.name }}</td>          
+      <tbody>
+        <tr *ngFor="let category of categories; let index = index; trackBy: trackByCategoryId"
+            (click)="updateCategory(category.id)" style="cursor: pointer;">
+            <td>{{ index + 1 }}</td>
+            <td>{{ category.name }}</td>
             <td>
-              <div style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" 
-                    (click)="updateCategory(category.id)">
-                  Cập Nhật
+                <button class="btn btn-danger btn-sm"
+                        (click)="deleteCategory(category); $event.stopPropagation()">
+                    <i class="fas fa-trash"></i> Xóa
                 </button>
-                <button class="btn btn-danger" 
-                  (click)="deleteCategory(category)">Xóa
-                </button>            
-                </div>
-            </td>          
-          </tr>
-        } @empty {
-          <h2>không tìm thấy danh mục</h2>
-        }
-        
-      </tbody>
-    </table>    
+            </td>
+        </tr>
+        <tr *ngIf="categories.length === 0">
+            <td colspan="3">
+                <h5 class="text-center text-muted mt-3">Không tìm thấy danh mục</h5>
+            </td>
+        </tr>
+    </tbody>
+    </table>
   </div>
+</div>

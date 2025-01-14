@@ -39,6 +39,11 @@ public class JwtTokenUtil {// ra hạn thời gian token có hiệu lực
 //    this.genrateSecretKey(); // kiểm tra xem cái securetKey có gen đc k hay k
         claim.put("phoneNumber", user.getPhoneNumber());
         claim.put("userId", user.getId());
+        if (user.getRole() != null) {
+            claim.put("role", user.getRole().getName());
+        } else {
+            claim.put("role", "USER"); // Mặc định role USER nếu không có
+        }
         // đoạn này đang chuẩn hóa đối tượng user của chúng ta sang user của spring security
         try {
             String token = Jwts.builder()
@@ -59,6 +64,10 @@ public class JwtTokenUtil {// ra hạn thời gian token có hiệu lực
     private Key getSignKey() { // đoạn code ma hóa sha key
         byte[] bytes = Decoders.BASE64.decode(secretKey);// dể chuyển đôi từ secretKey string sang 1 đối tượng key // Keys.hmacShaKeyFor(Decoders.BASE64.decode("X0UR5jbk9kS8d2Jm0X5HZ3szo0Yr92ZlRT+F3Slu9cQ="));
         return Keys.hmacShaKeyFor(bytes);
+    }
+    public String extractRole(String token) {
+        Claims claims = extracAllClaims(token);
+        return claims.get("role", String.class);
     }
 
     private String genrateSecretKey() {

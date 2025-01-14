@@ -2,7 +2,10 @@ package com.example.shopapp.controller;
 
 import com.example.shopapp.configuration.VNPayConfig;
 import com.example.shopapp.dtos.OrderDTO;
+import com.example.shopapp.exception.DaTanotFoundException;
 import com.example.shopapp.models.Order;
+import com.example.shopapp.request.OrderRequest;
+import com.example.shopapp.response.OrderBHResponse;
 import com.example.shopapp.response.OrderListResponse;
 import com.example.shopapp.response.OrderResponse;
 import com.example.shopapp.service.OrderService;
@@ -16,6 +19,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
@@ -44,57 +48,6 @@ public class OrderController {
     private final ModelMapper modelMapper;
     private final LocallizationUtils locallizationUtils;
 
-//    @PostMapping("")
-//    public ResponseEntity<?> createOrder(
-//            @Valid @RequestBody OrderDTO orderDTO,
-//            BindingResult result,
-//            HttpServletRequest request
-//    ) {
-//        try {
-//            if (result.hasErrors()) {
-//                List<String> errorMessages = result.getFieldErrors()
-//                        .stream()
-//                        .map(fieldError -> fieldError.getDefaultMessage())
-//                        .toList();
-//                return ResponseEntity.badRequest().body(errorMessages);
-//            }
-//            Order order = orderService.createOrder(orderDTO);
-//            return ResponseEntity.ok(order);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-
-//    @PostMapping("")
-//    public ResponseEntity<?> createOrder(
-//            @Valid @RequestBody OrderDTO orderDTO,
-//            BindingResult result,
-//            HttpServletRequest request
-//    ) {
-//        try {
-//            if (result.hasErrors()) {
-//                List<String> errorMessages = result.getFieldErrors()
-//                        .stream()
-//                        .map(fieldError -> fieldError.getDefaultMessage())
-//                        .toList();
-//                return ResponseEntity.badRequest().body(errorMessages);
-//            }
-//
-//            // Tạo đối tượng Order và lưu trữ nó
-//            Order order = orderService.createOrder(orderDTO);
-//
-//            // Gọi phương thức createOrder để tạo URL thanh toán VNPay
-//            String urlReturn = request.getRequestURL().toString(); // URL callback của bạn
-//            String vnpayUrl = orderService.createVNOrder(order, urlReturn);
-//
-//            // Trả về URL thanh toán VNPay cho phía frontend
-//            return ResponseEntity.ok(Map.of("paymentUrl", vnpayUrl));
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
-
-
     @PostMapping("")
     public ResponseEntity<?> createOrder(
             @Valid @RequestBody OrderDTO orderDTO,
@@ -110,26 +63,23 @@ public class OrderController {
                 return ResponseEntity.badRequest().body(errorMessages);
             }
 
-            // Tạo đối tượng Order và lưu trữ nó
             Order order = orderService.createOrder(orderDTO);
 
-            // Kiểm tra nếu payment_method là 'thanh toán khác' thì mới thực hiện tạo URL VNPay
             if ("other".equals(orderDTO.getPaymentMethod())) {
-                // Gọi phương thức createOrder để tạo URL thanh toán VNPay
-                String urlReturn = request.getRequestURL().toString(); // URL callback của bạn
+                String urlReturn = request.getRequestURL().toString();
                 String vnpayUrl = orderService.createVNOrder(order, urlReturn);
-
-                // Trả về URL thanh toán VNPay cho phía frontend
                 return ResponseEntity.ok(Map.of("paymentUrl", vnpayUrl));
             }
 
-            // Trường hợp không phải 'thanh toán khác'
-            return ResponseEntity.ok(Map.of("message", "Không cần tạo URL thanh toán VNPay cho phương thức thanh toán này."));
-
+            return ResponseEntity.ok(order);
+        } catch (DaTanotFoundException e) {
+            // Trả về lỗi nếu không đủ số lượng hoặc không tìm thấy sản phẩm
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred: " + e.getMessage());
         }
     }
+
 
 
 
@@ -219,24 +169,24 @@ public class OrderController {
     }
 
     @GetMapping("/get-orders-by-keyword")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<OrderListResponse> getOrdersByKeyword(
-            @RequestParam(defaultValue = "", required = false) String keyword,
+            @RequestParam(defaultValue = "") String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int limit
+            @RequestParam(defaultValue = "5") int limit
     ) {
-        // Tạo Pageable từ thông tin trang và giới hạn
+        // Sắp xếp theo ngày tạo mới nhất (orderDate) và ID giảm dần
         PageRequest pageRequest = PageRequest.of(
                 page, limit,
-                //Sort.by("createdAt").descending()
-                Sort.by("id").ascending()
+                Sort.by(Sort.Order.desc("orderDate"), Sort.Order.desc("id"))
         );
+
         Page<OrderResponse> orderPage = orderService
                 .getOrdersByKeyword(keyword, pageRequest)
                 .map(OrderResponse::fromOrder);
-        // Lấy tổng số trang
+
         int totalPages = orderPage.getTotalPages();
         List<OrderResponse> orderResponses = orderPage.getContent();
+
         return ResponseEntity.ok(OrderListResponse
                 .builder()
                 .orders(orderResponses)

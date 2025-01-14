@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("${api.prefix}/order_details")
@@ -28,6 +29,17 @@ import java.util.List;
 public class OrderDetailController {
     private final OrderDetailService orderDetailService;
     private final LocallizationUtils locallizationUtils;
+
+    @PutMapping("/cancel/{orderId}")
+    public ResponseEntity<?> handleCancelledOrder(@PathVariable Long orderId) {
+        try {
+            orderDetailService.handleCancelledOrder(orderId);
+            // Trả về JSON thay vì chuỗi
+            return ResponseEntity.ok(Map.of("message", "Stock updated successfully for cancelled order."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Error updating stock: " + e.getMessage()));
+        }
+    }
     // thêm mới order_detail
     @PostMapping
     public ResponseEntity<?> createOrderDetail(@Valid @RequestBody OrderDetailDTO orderDetailDTO) {

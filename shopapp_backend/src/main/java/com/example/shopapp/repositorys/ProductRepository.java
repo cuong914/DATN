@@ -26,15 +26,15 @@ public interface ProductRepository extends JpaRepository<Product ,Long> {
 //                              @Param("keyword") String keyword,
 //                              Pageable pageable);
     Page<Product> searProduct
-            (@Param("categoryId") Long categoryId,
-             @Param("keyword") String keyword, Pageable pageable);
+    (@Param("categoryId") Long categoryId,
+     @Param("keyword") String keyword, Pageable pageable);
 
 
 
-//    @Query("SELECT p, pi FROM Product p LEFT JOIN p.productImages pi WHERE p.id = :productId")
+    //    @Query("SELECT p, pi FROM Product p LEFT JOIN p.productImages pi WHERE p.id = :productId")
 //    Optional<Object[]> getDetailProduct(@Param("productId") Long productId);
-@Query("SELECT p FROM Product p LEFT JOIN FETCH p.productImages WHERE p.id = :productId")
-Optional<Product> getDetailProduct(@Param("productId") Long productId);
+    @Query("SELECT p FROM Product p LEFT JOIN FETCH p.productImages WHERE p.id = :productId")
+    Optional<Product> getDetailProduct(@Param("productId") Long productId);
 
 
     @Query("SELECT p FROM Product p WHERE p.id IN :productIds")
